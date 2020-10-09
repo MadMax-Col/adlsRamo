@@ -1,0 +1,39 @@
+{
+	"name": "Job_cargas_12am",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "LoadDataSAPTable_Raw_Gen2",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"Environment": "Desarrollo",
+					"Process": "Ramo",
+					"SubProcess": "Comercial",
+					"From": 0,
+					"To": 0
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2020-10-02T06:00:00Z",
+				"timeZone": "UTC",
+				"schedule": {
+					"minutes": [
+						0
+					],
+					"hours": [
+						6
+					]
+				}
+			}
+		}
+	}
+}

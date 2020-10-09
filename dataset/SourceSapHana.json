@@ -1,0 +1,16 @@
+{
+	"name": "SourceSapHana",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SourceSapHana",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SOURCES"
+		},
+		"annotations": [],
+		"type": "SapHanaTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

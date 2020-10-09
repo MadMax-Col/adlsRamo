@@ -1,0 +1,18 @@
+{
+	"name": "SourceSapHana",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SapHana",
+		"typeProperties": {
+			"server": "192.168.220.216:37015",
+			"authenticationType": "Basic",
+			"userName": "AZURE",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJlNzQ5YmZkNC1kMzQyLTQ4MzEtYWVlZS0zOGMxOWU1ZGQyOTAiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "ADFRamoIR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

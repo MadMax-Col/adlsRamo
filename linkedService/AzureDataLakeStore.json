@@ -1,0 +1,16 @@
+{
+	"name": "AzureDataLakeStore",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDataLakeStore",
+		"typeProperties": {
+			"dataLakeStoreUri": "https://dlsramo.azuredatalakestore.net/webhdfs/v1",
+			"servicePrincipalId": "422de20e-cf63-4006-ac2b-dcb90beab324",
+			"tenant": "af5eb6a4-5494-4a9e-a659-b79c92301b8e",
+			"subscriptionId": "78a25c99-6a22-4ab6-b979-26369b27de87",
+			"resourceGroupName": "RG_RAMO",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRGUkFNT183ZWUzN2M1NS05MWFkLTQ5YTUtYWUzZi00YTAzMDVkMTk4N2IiDQp9"
+		}
+	}
+}

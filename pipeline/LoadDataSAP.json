@@ -1,0 +1,112 @@
+{
+	"name": "LoadDataSAP",
+	"properties": {
+		"activities": [
+			{
+				"name": "LoadDataSAPTable_Raw_Gen2",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LoadDataSAPTable_Raw_Gen2",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LoadDataSAPHana_Raw_Gen2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LoadDataSAPTable_Raw_Gen2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LoadDataSAPHana_Raw_Gen2",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LoadDataRaw_Enriched",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LoadDataSAPHana_Raw_Gen2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LoadDataRaw_Enriched",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LoadDataRaw_Curated",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LoadDataRaw_Enriched",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LoadDataRaw_Curated",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LoadDataRaw_CuratedHana",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LoadDataRaw_Curated",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LoadDataRaw_Curated",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"Environment": "Desarrollo",
+						"Process": "Ramo",
+						"SubProcess": "Comercial",
+						"Fac": "1"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "0.MAESTRO EJECUCIÓN"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-10-09T12:15:41Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,27 @@
+{
+	"name": "SourceSapTableRaw",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SapTable",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"tableName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "SOURCES"
+		},
+		"annotations": [],
+		"type": "SapTableResource",
+		"schema": [],
+		"typeProperties": {
+			"tableName": {
+				"value": "@dataset().tableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

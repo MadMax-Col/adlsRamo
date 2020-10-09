@@ -1,0 +1,162 @@
+{
+	"name": "LoadDataRaw_Curated",
+	"properties": {
+		"activities": [
+			{
+				"name": "LkpFileOwners",
+				"description": "Lectura de parametrización de cargas.",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[audi].[uspRead_CURATED]",
+						"storedProcedureParameters": {
+							"Environment": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.Environment",
+									"type": "Expression"
+								}
+							},
+							"Fac": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.Fac",
+									"type": "Expression"
+								}
+							},
+							"Process": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.Process",
+									"type": "Expression"
+								}
+							},
+							"SubProcess": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.SubProcess",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SourceAzureSqlTableFramework",
+						"type": "DatasetReference",
+						"parameters": {
+							"tableName": "NA",
+							"Schema": "NA"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LkpFileOwners",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LkpFileOwners').output.Value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Notebook",
+							"type": "DatabricksNotebook",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": {
+									"value": "@{item().NotebookPath}",
+									"type": "Expression"
+								},
+								"baseParameters": {
+									"SourceFilePath": {
+										"value": "@{item().SourceFilePath}",
+										"type": "Expression"
+									},
+									"SourceFileName": {
+										"value": "@{item().SourceFileName}",
+										"type": "Expression"
+									},
+									"SourceFileExtension": {
+										"value": "@{item().SourceFileExtension}",
+										"type": "Expression"
+									},
+									"SinkFilePath": {
+										"value": "@{item().SinkFilePath}",
+										"type": "Expression"
+									},
+									"SinkFileName": {
+										"value": "@{item().SinkFileName}",
+										"type": "Expression"
+									},
+									"SinkFileExtension": {
+										"value": "@{item().SinkFileExtension}",
+										"type": "Expression"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureDatabricks",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"Environment": {
+				"type": "string",
+				"defaultValue": "Desarrollo"
+			},
+			"Process": {
+				"type": "string",
+				"defaultValue": "Ramo"
+			},
+			"SubProcess": {
+				"type": "string",
+				"defaultValue": "Comercial"
+			},
+			"Fac": {
+				"type": "int",
+				"defaultValue": 1
+			}
+		},
+		"folder": {
+			"name": "3.CARGA_CURATED"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-10-08T22:47:04Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
