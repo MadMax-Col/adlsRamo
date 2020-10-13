@@ -1,0 +1,31 @@
+{
+	"name": "10 Am",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "LoadDataSAPTable_Raw_Gen2",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"Environment": "Desarrollo",
+					"Process": "Ramo",
+					"SubProcess": "Comercial",
+					"From": 20190701,
+					"To": 20190831
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 1,
+				"startTime": "2020-10-13T15:00:00.000Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
