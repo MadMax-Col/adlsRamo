@@ -3,21 +3,7 @@
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
-		"pipelines": [
-			{
-				"pipelineReference": {
-					"referenceName": "LoadDataSAPTable_Raw_Gen2",
-					"type": "PipelineReference"
-				},
-				"parameters": {
-					"Environment": "Desarrollo",
-					"Process": "Ramo",
-					"SubProcess": "Comercial",
-					"From": 20190701,
-					"To": 20190831
-				}
-			}
-		],
+		"pipelines": [],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
