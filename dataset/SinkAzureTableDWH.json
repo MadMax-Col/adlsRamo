@@ -12,7 +12,7 @@
 		"type": "AzureTable",
 		"schema": [],
 		"typeProperties": {
-			"tableName": "DimCliente"
+			"tableName": "DimClienteVenta"
 		}
 	}
 }

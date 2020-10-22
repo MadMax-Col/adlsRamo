@@ -45,8 +45,8 @@
 						"referenceName": "SourceAzureBlobStorageDWH",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "CSV/DimCliente/",
-							"SinkFileName": "part-00000-tid-6538835321674005901-79c30d34-f410-46fe-8fb8-f5b1a7a7d436-2223-1-c000.csv",
+							"SinkFilePath": "CSV/DimClienteVenta/",
+							"SinkFileName": "part-00000-tid-134837787649847997-f7c902b5-764b-4029-aa7e-268f4387b0af-5473-1-c000.csv",
 							"SourceFileExtension": "csv"
 						}
 					}
