@@ -1,0 +1,96 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "dframo"
+		},
+		"AzureDataLakeStore_servicePrincipalKey": {
+			"value": ""
+		},
+		"AzureDataLakeStoreGen2_accountKey": {
+			"value": ""
+		},
+		"AzureDatabricks_accessToken": {
+			"value": ""
+		},
+		"AzureSqlDatabase_connectionString": {
+			"value": ""
+		},
+		"SapHanav2_connectionString": {
+			"value": ""
+		},
+		"SapTable_password": {
+			"value": ""
+		},
+		"SourceSapHana_password": {
+			"value": ""
+		},
+		"SqlServer_connectionString": {
+			"value": ""
+		},
+		"SourceAzureBlobStorage_connectionString": {
+			"value": ""
+		},
+		"SinkAzureTableStorage_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStore_properties_typeProperties_dataLakeStoreUri": {
+			"value": "https://dlsramo.azuredatalakestore.net/webhdfs/v1"
+		},
+		"AzureDataLakeStore_properties_typeProperties_servicePrincipalId": {
+			"value": "422de20e-cf63-4006-ac2b-dcb90beab324"
+		},
+		"AzureDataLakeStore_properties_typeProperties_tenant": {
+			"value": "af5eb6a4-5494-4a9e-a659-b79c92301b8e"
+		},
+		"AzureDataLakeStore_properties_typeProperties_subscriptionId": {
+			"value": "78a25c99-6a22-4ab6-b979-26369b27de87"
+		},
+		"AzureDataLakeStore_properties_typeProperties_resourceGroupName": {
+			"value": "RG_RAMO"
+		},
+		"AzureDataLakeStoreGen2_properties_typeProperties_url": {
+			"value": "https://asaramo.dfs.core.windows.net"
+		},
+		"SapTable_properties_typeProperties_clientId": {
+			"value": "300"
+		},
+		"SapTable_properties_typeProperties_userName": {
+			"value": "igerencia"
+		},
+		"SapTable_properties_typeProperties_server": {
+			"value": "192.168.220.217"
+		},
+		"SapTable_properties_typeProperties_systemNumber": {
+			"value": "10"
+		},
+		"SourceSapHana_properties_typeProperties_server": {
+			"value": "192.168.220.216:37015"
+		},
+		"SourceSapHana_properties_typeProperties_userName": {
+			"value": "AZURE"
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment": {
+			"value": "Desarrollo"
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Process": {
+			"value": "Ramo"
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_SubProcess": {
+			"value": "Comercial"
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_From": {
+			"value": 0
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_To": {
+			"value": 0
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

@@ -1,0 +1,2491 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "dframo"
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment": {
+			"type": "string",
+			"defaultValue": "Desarrollo"
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Process": {
+			"type": "string",
+			"defaultValue": "Ramo"
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_SubProcess": {
+			"type": "string",
+			"defaultValue": "Comercial"
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_From": {
+			"type": "int",
+			"defaultValue": 0
+		},
+		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_To": {
+			"type": "int",
+			"defaultValue": 0
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/SinkAzureTableDWH')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SinkAzureTableStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SINK"
+				},
+				"annotations": [],
+				"type": "AzureTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": "DimCliente"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataRaw_Curated')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkpFileOwners",
+						"description": "Lectura de parametrización de cargas.",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[audi].[uspRead_CURATED]",
+								"storedProcedureParameters": {
+									"Environment": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Environment",
+											"type": "Expression"
+										}
+									},
+									"Fac": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.Fac",
+											"type": "Expression"
+										}
+									},
+									"Process": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Process",
+											"type": "Expression"
+										}
+									},
+									"SubProcess": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SubProcess",
+											"type": "Expression"
+										}
+									}
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "NA",
+									"Schema": "NA"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkpFileOwners",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkpFileOwners').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Notebook",
+									"type": "DatabricksNotebook",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"notebookPath": {
+											"value": "@{item().NotebookPath}",
+											"type": "Expression"
+										},
+										"baseParameters": {
+											"SourceFilePath": {
+												"value": "@{item().SourceFilePath}",
+												"type": "Expression"
+											},
+											"SourceFileName": {
+												"value": "@{item().SourceFileName}",
+												"type": "Expression"
+											},
+											"SourceFileExtension": {
+												"value": "@{item().SourceFileExtension}",
+												"type": "Expression"
+											},
+											"SinkFilePath": {
+												"value": "@{item().SinkFilePath}",
+												"type": "Expression"
+											},
+											"SinkFileName": {
+												"value": "@{item().SinkFileName}",
+												"type": "Expression"
+											},
+											"SinkFileExtension": {
+												"value": "@{item().SinkFileExtension}",
+												"type": "Expression"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureDatabricks",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"Environment": {
+						"type": "string",
+						"defaultValue": "Desarrollo"
+					},
+					"Process": {
+						"type": "string",
+						"defaultValue": "Ramo"
+					},
+					"SubProcess": {
+						"type": "string",
+						"defaultValue": "Comercial"
+					},
+					"Fac": {
+						"type": "int",
+						"defaultValue": 1
+					}
+				},
+				"folder": {
+					"name": "3.CARGA_CURATED"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-08T22:47:04Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataRaw_Enriched')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkpFileOwners",
+						"description": "Lectura de parametrización de cargas.",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[audi].[uspRead_ENRICHED]",
+								"storedProcedureParameters": {
+									"Environment": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Environment",
+											"type": "Expression"
+										}
+									},
+									"date": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.Date",
+											"type": "Expression"
+										}
+									},
+									"Process": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Process",
+											"type": "Expression"
+										}
+									},
+									"SubProcess": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SubProcess",
+											"type": "Expression"
+										}
+									}
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "NA",
+									"Schema": "NA"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkpFileOwners",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkpFileOwners').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Notebook",
+									"type": "DatabricksNotebook",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"notebookPath": {
+											"value": "@{item().NotebookPath}",
+											"type": "Expression"
+										},
+										"baseParameters": {
+											"SourceFilePath": {
+												"value": "@{item().SourceFilePath}",
+												"type": "Expression"
+											},
+											"SourceFileName": {
+												"value": "@{item().SourceFileName}",
+												"type": "Expression"
+											},
+											"SourceFileExtension": {
+												"value": "@{item().SourceFileExtension}",
+												"type": "Expression"
+											},
+											"SinkFilePath": {
+												"value": "@{item().SinkFilePath}",
+												"type": "Expression"
+											},
+											"SinkFileName": {
+												"value": "@{item().SinkFileName}",
+												"type": "Expression"
+											},
+											"SinkFileExtension": {
+												"value": "@{item().SinkFileExtension}",
+												"type": "Expression"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureDatabricks",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"Environment": {
+						"type": "string",
+						"defaultValue": "Desarrollo"
+					},
+					"Process": {
+						"type": "string",
+						"defaultValue": "Ramo"
+					},
+					"SubProcess": {
+						"type": "string",
+						"defaultValue": "Comercial"
+					},
+					"Date": {
+						"type": "int",
+						"defaultValue": 0
+					}
+				},
+				"folder": {
+					"name": "2.CARGA_ENRICHED"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-02T12:23:59Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataRaw_Enriched_old')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkpFileOwners",
+						"description": "Lectura de parametrización de cargas.",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[audi].[uspRead_ENRICHED]",
+								"storedProcedureParameters": {
+									"Environment": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Environment",
+											"type": "Expression"
+										}
+									},
+									"date": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.Date",
+											"type": "Expression"
+										}
+									},
+									"Process": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Process",
+											"type": "Expression"
+										}
+									},
+									"SubProcess": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SubProcess",
+											"type": "Expression"
+										}
+									}
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "NA",
+									"Schema": "NA"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkpFileOwners",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkpFileOwners').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Notebook",
+									"type": "DatabricksNotebook",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"notebookPath": {
+											"value": "/ENRICHED/@{item().enrichedFileName}",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureDatabricks",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"Environment": {
+						"type": "string",
+						"defaultValue": "Desarrollo"
+					},
+					"Process": {
+						"type": "string",
+						"defaultValue": "Ramo"
+					},
+					"SubProcess": {
+						"type": "string",
+						"defaultValue": "Comercial"
+					},
+					"Date": {
+						"type": "int",
+						"defaultValue": 0
+					}
+				},
+				"folder": {
+					"name": "temp"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-02T06:58:27Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SinSQLLocal')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SqlServer",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"tableName": {
+						"type": "string"
+					},
+					"Schema": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SINK"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().tableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceSapHana')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SourceSapHana",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SOURCES"
+				},
+				"annotations": [],
+				"type": "SapHanaTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceSapHanaRaw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SourceSapHana",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"tableName": {
+						"type": "string"
+					},
+					"Schema": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SOURCES"
+				},
+				"annotations": [],
+				"type": "SapHanaTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().tableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceSapTableRaw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SapTable",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SOURCES"
+				},
+				"annotations": [],
+				"type": "SapTableResource",
+				"schema": [],
+				"typeProperties": {
+					"tableName": {
+						"value": "@dataset().tableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataDWH')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "merge",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceAzureBlobStorageDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "CSV/DimCliente/",
+									"SinkFileName": "part-00000-tid-6538835321674005901-79c30d34-f410-46fe-8fb8-f5b1a7a7d436-2223-1-c000.csv",
+									"SourceFileExtension": "csv"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "4.CARGA_AZURE_TABLE"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SinkAzureTableDWH')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataSAPHana_Raw_Gen2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkpFileOwners",
+						"description": "Lectura de parametrización de cargas.",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[audi].[uspReadFileOwners]",
+								"storedProcedureParameters": {
+									"Environment": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Environment",
+											"type": "Expression"
+										}
+									},
+									"From": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.From",
+											"type": "Expression"
+										}
+									},
+									"Process": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Process",
+											"type": "Expression"
+										}
+									},
+									"SubProcess": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SubProcess",
+											"type": "Expression"
+										}
+									},
+									"To": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.To",
+											"type": "Expression"
+										}
+									}
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "NA",
+									"Schema": "NA"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach",
+						"description": "Iteración de parametrización de cargas.",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkpFileOwners",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkpFileOwners').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "CopySAPRaw",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SapHanaSource",
+											"query": {
+												"value": "@{concat('SELECT ',item().SourceColumnSelect,' WHERE ',item().SourceFilter)}",
+												"type": "Expression"
+											},
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceSapHanaRaw",
+											"type": "DatasetReference",
+											"parameters": {
+												"tableName": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												},
+												"Schema": "SAPRAP"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SinkParquetRawGen2",
+											"type": "DatasetReference",
+											"parameters": {
+												"SinkFilePath": {
+													"value": "@item().SinkFilePath",
+													"type": "Expression"
+												},
+												"SinkFileName": {
+													"value": "@item().SinkFileName",
+													"type": "Expression"
+												},
+												"SourceFileExtension": {
+													"value": "@item().SinkFileExtension",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Success",
+									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "CopySAPRaw",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
+										"storedProcedureParameters": {
+											"ExecutionDuration": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionError": {
+												"value": {
+													"value": "n/a",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionStart": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"fkFileOwners": {
+												"value": {
+													"value": "@item().pkFileOwners",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"Pipeline": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RowsCopied": {
+												"value": {
+													"value": "@if(contains(activity('CopySAPRaw').output,'rowsCopied'),activity('CopySAPRaw').output.rowsCopied,-1)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"RowsRead": {
+												"value": {
+													"value": "@if(contains(activity('CopySAPRaw').output,'rowsRead'),activity('CopySAPRaw').output.rowsRead,-1)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"StateOfExecutions": {
+												"value": {
+													"value": "1",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"TriggerName": {
+												"value": {
+													"value": "@pipeline().TriggerName",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Failure",
+									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "CopySAPRaw",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
+										"storedProcedureParameters": {
+											"ExecutionDuration": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionError": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.errors[0].Message",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionStart": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"fkFileOwners": {
+												"value": {
+													"value": "@item().pkFileOwners",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"Pipeline": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RowsCopied": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"RowsRead": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"StateOfExecutions": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"TriggerName": {
+												"value": {
+													"value": "@pipeline().TriggerName",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"Environment": {
+						"type": "string",
+						"defaultValue": "Desarrollo"
+					},
+					"Process": {
+						"type": "string",
+						"defaultValue": "Ramo"
+					},
+					"SubProcess": {
+						"type": "string",
+						"defaultValue": "ComercialHana"
+					},
+					"From": {
+						"type": "int",
+						"defaultValue": 0
+					},
+					"To": {
+						"type": "int",
+						"defaultValue": 0
+					}
+				},
+				"folder": {
+					"name": "1.CARGA_RAW"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-02T12:23:59Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceSapHanaRaw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataSAPTable_Raw_Gen2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkpFileOwners",
+						"description": "Lectura de parametrización de cargas.",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[audi].[uspReadFileOwners]",
+								"storedProcedureParameters": {
+									"Environment": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Environment",
+											"type": "Expression"
+										}
+									},
+									"From": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.From",
+											"type": "Expression"
+										}
+									},
+									"Process": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Process",
+											"type": "Expression"
+										}
+									},
+									"SubProcess": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SubProcess",
+											"type": "Expression"
+										}
+									},
+									"To": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.To",
+											"type": "Expression"
+										}
+									}
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "NA",
+									"Schema": "NA"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach",
+						"description": "Iteración de parametrización de cargas.",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkpFileOwners",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkpFileOwners').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "CopySAPRaw",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SapTableSource",
+											"rfcTableOptions": {
+												"value": "@{item().SourceFilter}",
+												"type": "Expression"
+											},
+											"customRfcReadTableFunctionModule": "",
+											"rfcTableFields": {
+												"value": "@item().SourceColumnSelect",
+												"type": "Expression"
+											},
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceSapTableRaw",
+											"type": "DatasetReference",
+											"parameters": {
+												"tableName": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SinkParquetRawGen2",
+											"type": "DatasetReference",
+											"parameters": {
+												"SinkFilePath": {
+													"value": "@item().SinkFilePath",
+													"type": "Expression"
+												},
+												"SinkFileName": {
+													"value": "@item().SinkFileName",
+													"type": "Expression"
+												},
+												"SourceFileExtension": {
+													"value": "@item().SinkFileExtension",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Success",
+									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "CopySAPRaw",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
+										"storedProcedureParameters": {
+											"ExecutionDuration": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionError": {
+												"value": {
+													"value": "n/a",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionStart": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"fkFileOwners": {
+												"value": {
+													"value": "@item().pkFileOwners",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"Pipeline": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RowsCopied": {
+												"value": {
+													"value": "@if(contains(activity('CopySAPRaw').output,'rowsCopied'),activity('CopySAPRaw').output.rowsCopied,-1)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"RowsRead": {
+												"value": {
+													"value": "@if(contains(activity('CopySAPRaw').output,'rowsRead'),activity('CopySAPRaw').output.rowsRead,-1)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"StateOfExecutions": {
+												"value": {
+													"value": "1",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"TriggerName": {
+												"value": {
+													"value": "@pipeline().TriggerName",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Failure",
+									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "CopySAPRaw",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
+										"storedProcedureParameters": {
+											"ExecutionDuration": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionError": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.errors[0].Message",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionStart": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"fkFileOwners": {
+												"value": {
+													"value": "@item().pkFileOwners",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"Pipeline": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RowsCopied": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"RowsRead": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"StateOfExecutions": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"TriggerName": {
+												"value": {
+													"value": "@pipeline().TriggerName",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"Environment": {
+						"type": "string",
+						"defaultValue": "Desarrollo"
+					},
+					"Process": {
+						"type": "string",
+						"defaultValue": "Ramo"
+					},
+					"SubProcess": {
+						"type": "string",
+						"defaultValue": "Comercial"
+					},
+					"From": {
+						"type": "int",
+						"defaultValue": 0
+					},
+					"To": {
+						"type": "int",
+						"defaultValue": 0
+					}
+				},
+				"folder": {
+					"name": "1.CARGA_RAW"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-09-25T15:08:00Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceSapTableRaw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataSAP_Raw')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkpFileOwners",
+						"description": "Lectura de parametrización de cargas.",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[audi].[uspReadFileOwners]",
+								"storedProcedureParameters": {
+									"Environment": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Environment",
+											"type": "Expression"
+										}
+									},
+									"From": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.From",
+											"type": "Expression"
+										}
+									},
+									"Process": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Process",
+											"type": "Expression"
+										}
+									},
+									"SubProcess": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SubProcess",
+											"type": "Expression"
+										}
+									},
+									"To": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.To",
+											"type": "Expression"
+										}
+									}
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "NA",
+									"Schema": "NA"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach",
+						"description": "Iteración de parametrización de cargas.",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkpFileOwners",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkpFileOwners').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "CopySAPRaw",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SapTableSource",
+											"rfcTableOptions": {
+												"value": "@{item().SourceFilter}",
+												"type": "Expression"
+											},
+											"customRfcReadTableFunctionModule": "",
+											"rfcTableFields": {
+												"value": "@item().SourceColumnSelect",
+												"type": "Expression"
+											},
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureDataLakeStoreWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceSapTableRaw",
+											"type": "DatasetReference",
+											"parameters": {
+												"tableName": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SinkParquetRaw",
+											"type": "DatasetReference",
+											"parameters": {
+												"SinkFilePath": {
+													"value": "@item().SinkFilePath",
+													"type": "Expression"
+												},
+												"SinkFileName": {
+													"value": "@item().SinkFileName",
+													"type": "Expression"
+												},
+												"SourceFileExtension": {
+													"value": "@item().SinkFileExtension",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Success",
+									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "CopySAPRaw",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
+										"storedProcedureParameters": {
+											"ExecutionDuration": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionError": {
+												"value": {
+													"value": "n/a",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionStart": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"fkFileOwners": {
+												"value": {
+													"value": "@item().pkFileOwners",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"Pipeline": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RowsCopied": {
+												"value": {
+													"value": "@if(contains(activity('CopySAPRaw').output,'rowsCopied'),activity('CopySAPRaw').output.rowsCopied,-1)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"RowsRead": {
+												"value": {
+													"value": "@if(contains(activity('CopySAPRaw').output,'rowsRead'),activity('CopySAPRaw').output.rowsRead,-1)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"StateOfExecutions": {
+												"value": {
+													"value": "1",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"TriggerName": {
+												"value": {
+													"value": "@pipeline().TriggerName",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Failure",
+									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "CopySAPRaw",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
+										"storedProcedureParameters": {
+											"ExecutionDuration": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionError": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.errors[0].Message",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionStart": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"fkFileOwners": {
+												"value": {
+													"value": "@item().pkFileOwners",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"Pipeline": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RowsCopied": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"RowsRead": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"StateOfExecutions": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"TriggerName": {
+												"value": {
+													"value": "@pipeline().TriggerName",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"Environment": {
+						"type": "string",
+						"defaultValue": "Desarrollo"
+					},
+					"Process": {
+						"type": "string",
+						"defaultValue": "Ramo"
+					},
+					"SubProcess": {
+						"type": "string",
+						"defaultValue": "Comercial"
+					},
+					"From": {
+						"type": "int",
+						"defaultValue": 0
+					},
+					"To": {
+						"type": "int",
+						"defaultValue": 0
+					}
+				},
+				"folder": {
+					"name": "1.CARGA_RAW"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-08-26T13:38:29Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceSapTableRaw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataSAP_SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LkpFileOwners",
+						"description": "Lectura de parametrización de cargas.",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[audi].[uspReadFileOwners]",
+								"storedProcedureParameters": {
+									"Environment": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Environment",
+											"type": "Expression"
+										}
+									},
+									"From": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.From",
+											"type": "Expression"
+										}
+									},
+									"Process": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.Process",
+											"type": "Expression"
+										}
+									},
+									"SubProcess": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SubProcess",
+											"type": "Expression"
+										}
+									},
+									"To": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.To",
+											"type": "Expression"
+										}
+									}
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "NA",
+									"Schema": "NA"
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach",
+						"description": "Iteración de parametrización de cargas.",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "LkpFileOwners",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('LkpFileOwners').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "CopySAPRaw",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SapTableSource",
+											"rfcTableOptions": {
+												"value": "@{item().SourceFilter}",
+												"type": "Expression"
+											},
+											"customRfcReadTableFunctionModule": "",
+											"rfcTableFields": {
+												"value": "@item().SourceColumnSelect",
+												"type": "Expression"
+											},
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink"
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceSapTableRaw",
+											"type": "DatasetReference",
+											"parameters": {
+												"tableName": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SourceAzureSqlTableFramework",
+											"type": "DatasetReference",
+											"parameters": {
+												"tableName": {
+													"value": "@item().SinkFileName",
+													"type": "Expression"
+												},
+												"Schema": "RAMO"
+											}
+										}
+									]
+								},
+								{
+									"name": "Success",
+									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "CopySAPRaw",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
+										"storedProcedureParameters": {
+											"ExecutionDuration": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionError": {
+												"value": {
+													"value": "n/a",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionStart": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"fkFileOwners": {
+												"value": {
+													"value": "@item().pkFileOwners",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"Pipeline": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RowsCopied": {
+												"value": {
+													"value": "@if(contains(activity('CopySAPRaw').output,'rowsCopied'),activity('CopySAPRaw').output.rowsCopied,-1)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"RowsRead": {
+												"value": {
+													"value": "@if(contains(activity('CopySAPRaw').output,'rowsRead'),activity('CopySAPRaw').output.rowsRead,-1)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"StateOfExecutions": {
+												"value": {
+													"value": "1",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"TriggerName": {
+												"value": {
+													"value": "@pipeline().TriggerName",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Failure",
+									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "CopySAPRaw",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
+										"storedProcedureParameters": {
+											"ExecutionDuration": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionError": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.errors[0].Message",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ExecutionStart": {
+												"value": {
+													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@item().SourceFileName",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"fkFileOwners": {
+												"value": {
+													"value": "@item().pkFileOwners",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"Pipeline": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"RowsCopied": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"RowsRead": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"StateOfExecutions": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"TriggerName": {
+												"value": {
+													"value": "@pipeline().TriggerName",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"Environment": {
+						"type": "string",
+						"defaultValue": "Desarrollo"
+					},
+					"Process": {
+						"type": "string",
+						"defaultValue": "Ramo"
+					},
+					"SubProcess": {
+						"type": "string",
+						"defaultValue": "Comercial"
+					},
+					"From": {
+						"type": "int",
+						"defaultValue": 0
+					},
+					"To": {
+						"type": "int",
+						"defaultValue": 0
+					}
+				},
+				"folder": {
+					"name": "1.CARGA_RAW"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-09-09T13:34:45Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceSapTableRaw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataSAP')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LoadDataSAPTable_Raw_Gen2",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataSAPTable_Raw_Gen2",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "LoadDataSAPHana_Raw_Gen2",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "LoadDataSAPTable_Raw_Gen2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataSAPHana_Raw_Gen2",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "LoadDataRaw_Enriched",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "LoadDataSAPHana_Raw_Gen2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataRaw_Enriched",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "LoadDataRaw_Curated",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "LoadDataRaw_Enriched",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataRaw_Curated",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "LoadDataRaw_CuratedHana",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "LoadDataRaw_Curated",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataRaw_Curated",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"Environment": "Desarrollo",
+								"Process": "Ramo",
+								"SubProcess": "Comercial",
+								"Fac": "1"
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "0.MAESTRO EJECUCIÓN"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-09T12:15:41Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/LoadDataSAPTable_Raw_Gen2')]",
+				"[concat(variables('factoryId'), '/pipelines/LoadDataSAPHana_Raw_Gen2')]",
+				"[concat(variables('factoryId'), '/pipelines/LoadDataRaw_Enriched')]",
+				"[concat(variables('factoryId'), '/pipelines/LoadDataRaw_Curated')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Job_cargas_12am')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "LoadDataSAPTable_Raw_Gen2",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"Environment": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment')]",
+							"Process": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Process')]",
+							"SubProcess": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_SubProcess')]",
+							"From": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_From')]",
+							"To": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_To')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2020-10-02T06:00:00Z",
+						"timeZone": "UTC",
+						"schedule": {
+							"minutes": [
+								0
+							],
+							"hours": [
+								6
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/LoadDataSAPTable_Raw_Gen2')]"
+			]
+		}
+	]
+}
