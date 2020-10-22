@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "LoadDataDWH",
 	"properties": {
 		"activities": [
 			{
@@ -16,17 +16,43 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "ParquetSource",
+						"type": "DelimitedTextSource",
 						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
+							"type": "AzureBlobStorageReadSettings",
 							"recursive": true
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
 						}
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "merge",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
-						"referenceName": "SinkParquetRawGen2",
+						"referenceName": "SourceAzureBlobStorageDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "CSV/DimClienteVenta/",
+							"SinkFileName": "part-00000-tid-134837787649847997-f7c902b5-764b-4029-aa7e-268f4387b0af-5473-1-c000.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
 						"type": "DatasetReference"
 					}
 				]
