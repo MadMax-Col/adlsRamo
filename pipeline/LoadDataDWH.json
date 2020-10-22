@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "FactPresupuesto",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -16,13 +16,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "DelimitedTextSource",
+						"type": "ParquetSource",
 						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
+							"type": "AzureBlobFSReadSettings",
 							"recursive": true
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
 						}
 					},
 					"sink": {
@@ -42,12 +39,12 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceAzureBlobStorageDWH",
+						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "CSV/DimClienteVenta/",
-							"SinkFileName": "part-00000-tid-134837787649847997-f7c902b5-764b-4029-aa7e-268f4387b0af-5473-1-c000.csv",
-							"SourceFileExtension": "csv"
+							"SinkFilePath": "PARQUET/DimClienteVenta/",
+							"SinkFileName": "part-00000-tid-3212672276922540794-57c27116-ae67-4e5a-9dd5-a047768773a8-464-1-c000.snappy",
+							"SourceFileExtension": "parquet"
 						}
 					}
 				],
