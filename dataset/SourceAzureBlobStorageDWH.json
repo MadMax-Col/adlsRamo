@@ -24,6 +24,14 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().SinkFileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().SinkFilePath",
+					"type": "Expression"
+				},
 				"container": "fsramo"
 			},
 			"columnDelimiter": ",",
