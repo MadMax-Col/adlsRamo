@@ -1,0 +1,36 @@
+{
+	"name": "SourceAzureBlobStorageDWH",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SourceAzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SinkFilePath": {
+				"type": "string"
+			},
+			"SinkFileName": {
+				"type": "string"
+			},
+			"SourceFileExtension": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "SOURCES"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "fsramo"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
