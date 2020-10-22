@@ -46,7 +46,8 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"SinkFilePath": "CSV/DimClienteVenta/",
-							"SinkFileName": "part-00000-tid-134837787649847997-f7c902b5-764b-4029-aa7e-268f4387b0af-5473-1-c000.csv"
+							"SinkFileName": "part-00000-tid-134837787649847997-f7c902b5-764b-4029-aa7e-268f4387b0af-5473-1-c000.csv",
+							"SourceFileExtension": "csv"
 						}
 					}
 				],
