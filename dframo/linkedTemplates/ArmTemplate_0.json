@@ -23,13 +23,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
 		},
-		"SourceAzureBlobStorage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SourceAzureBlobStorage'"
-		},
 		"SinkAzureTableStorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SinkAzureTableStorage'"
+		},
+		"SourceAzureBlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SourceAzureBlobStorage'"
 		},
 		"SapHanav2_connectionString": {
 			"type": "secureString",
@@ -42,10 +42,6 @@
 		"SourceSapHana_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SourceSapHana'"
-		},
-		"SqlServer_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SqlServer'"
 		},
 		"AzureDataLakeStore_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",
@@ -170,6 +166,32 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SinkAzureTableStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureTableStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('SinkAzureTableStorage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceAzureBlobStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('SourceAzureBlobStorage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/10 Am')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -182,7 +204,7 @@
 					"recurrence": {
 						"frequency": "Minute",
 						"interval": 1,
-						"startTime": "2020-10-13T15:00:00.000Z",
+						"startTime": "2020-10-13T15:00:00Z",
 						"timeZone": "UTC"
 					}
 				}
@@ -202,7 +224,7 @@
 					"recurrence": {
 						"frequency": "Minute",
 						"interval": 1,
-						"startTime": "2020-10-13T17:00:00.000Z",
+						"startTime": "2020-10-13T17:00:00Z",
 						"timeZone": "UTC"
 					}
 				}
@@ -222,7 +244,7 @@
 					"recurrence": {
 						"frequency": "Minute",
 						"interval": 1,
-						"startTime": "2020-10-13T19:00:00.000Z",
+						"startTime": "2020-10-13T19:00:00Z",
 						"timeZone": "UTC"
 					}
 				}
@@ -242,7 +264,7 @@
 					"recurrence": {
 						"frequency": "Minute",
 						"interval": 1,
-						"startTime": "2020-10-13T13:00:00.000Z",
+						"startTime": "2020-10-13T13:00:00Z",
 						"timeZone": "UTC"
 					}
 				}
@@ -270,30 +292,35 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SourceAzureBlobStorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"name": "[concat(parameters('factoryName'), '/SinkAzureTableDWH')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SinkAzureTableStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SINK"
+				},
 				"annotations": [],
-				"type": "AzureBlobStorage",
+				"type": "AzureTable",
+				"schema": [],
 				"typeProperties": {
-					"connectionString": "[parameters('SourceAzureBlobStorage_connectionString')]"
+					"tableName": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
 				}
 			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SinkAzureTableStorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureTableStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('SinkAzureTableStorage_connectionString')]"
-				}
-			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SinkAzureTableStorage')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SinkParquetRaw')]",
@@ -384,6 +411,55 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStoreGen2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceAzureBlobStorageDWH')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SourceAzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SinkFilePath": {
+						"type": "string"
+					},
+					"SinkFileName": {
+						"type": "string"
+					},
+					"SourceFileExtension": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SOURCES"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().SinkFileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().SinkFilePath",
+							"type": "Expression"
+						},
+						"container": "fsramo"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SourceAzureBlobStorage')]"
 			]
 		},
 		{
@@ -494,74 +570,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/ADFRamoIR')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SqlServer')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('SqlServer_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "ADFIgerenciaIR",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/ADFIgerenciaIR')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceAzureBlobStorageDWH')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SourceAzureBlobStorage",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"SinkFilePath": {
-						"type": "string"
-					},
-					"SinkFileName": {
-						"type": "string"
-					},
-					"SourceFileExtension": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "SOURCES"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().SinkFileName",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().SinkFilePath",
-							"type": "Expression"
-						},
-						"container": "fsramo"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SourceAzureBlobStorage')]"
 			]
 		}
 	]

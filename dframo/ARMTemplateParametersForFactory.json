@@ -23,16 +23,16 @@
 		"SapTable_password": {
 			"value": ""
 		},
-		"SourceSapHana_password": {
-			"value": ""
-		},
-		"SqlServer_connectionString": {
+		"SinkAzureTableStorage_connectionString": {
 			"value": ""
 		},
 		"SourceAzureBlobStorage_connectionString": {
 			"value": ""
 		},
-		"SinkAzureTableStorage_connectionString": {
+		"SourceSapHana_password": {
+			"value": ""
+		},
+		"SqlServer_connectionString": {
 			"value": ""
 		},
 		"AzureDataLakeStore_properties_typeProperties_dataLakeStoreUri": {

@@ -31,6 +31,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SapTable'"
 		},
+		"SinkAzureTableStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SinkAzureTableStorage'"
+		},
+		"SourceAzureBlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SourceAzureBlobStorage'"
+		},
 		"SourceSapHana_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SourceSapHana'"
@@ -38,14 +46,6 @@
 		"SqlServer_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SqlServer'"
-		},
-		"SourceAzureBlobStorage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SourceAzureBlobStorage'"
-		},
-		"SinkAzureTableStorage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SinkAzureTableStorage'"
 		},
 		"AzureDataLakeStore_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",
@@ -154,11 +154,11 @@
 					"AzureSqlDatabase_connectionString": {
 						"value": "[parameters('AzureSqlDatabase_connectionString')]"
 					},
-					"SourceAzureBlobStorage_connectionString": {
-						"value": "[parameters('SourceAzureBlobStorage_connectionString')]"
-					},
 					"SinkAzureTableStorage_connectionString": {
 						"value": "[parameters('SinkAzureTableStorage_connectionString')]"
+					},
+					"SourceAzureBlobStorage_connectionString": {
+						"value": "[parameters('SourceAzureBlobStorage_connectionString')]"
 					},
 					"SapHanav2_connectionString": {
 						"value": "[parameters('SapHanav2_connectionString')]"
@@ -168,9 +168,6 @@
 					},
 					"SourceSapHana_password": {
 						"value": "[parameters('SourceSapHana_password')]"
-					},
-					"SqlServer_connectionString": {
-						"value": "[parameters('SqlServer_connectionString')]"
 					},
 					"AzureDataLakeStore_properties_typeProperties_dataLakeStoreUri": {
 						"value": "[parameters('AzureDataLakeStore_properties_typeProperties_dataLakeStoreUri')]"
@@ -225,6 +222,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"SqlServer_connectionString": {
+						"value": "[parameters('SqlServer_connectionString')]"
 					},
 					"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment": {
 						"value": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment')]"

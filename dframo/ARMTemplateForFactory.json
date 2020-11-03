@@ -31,6 +31,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SapTable'"
 		},
+		"SinkAzureTableStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SinkAzureTableStorage'"
+		},
+		"SourceAzureBlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SourceAzureBlobStorage'"
+		},
 		"SourceSapHana_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SourceSapHana'"
@@ -38,14 +46,6 @@
 		"SqlServer_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SqlServer'"
-		},
-		"SourceAzureBlobStorage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SourceAzureBlobStorage'"
-		},
-		"SinkAzureTableStorage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SinkAzureTableStorage'"
 		},
 		"AzureDataLakeStore_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",
@@ -120,6 +120,1150 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataDWH')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "DimAgencia",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimAgencia/",
+									"SinkFileName": "DimAgencia.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimAgencia"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimAlmacen",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimAgencia",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimAlmacen/",
+									"SinkFileName": "DimAlmacen.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimAlmacen"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimCanal",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimAlmacen",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimCanal/",
+									"SinkFileName": "DimCanal.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimCanal"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimCategoria",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimCanal",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimCategoria/",
+									"SinkFileName": "DimCategoria.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimCategoria"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimCliente",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimCategoria",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimCliente/",
+									"SinkFileName": "DimCliente.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimCliente"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimClienteVenta",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimCliente",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimClienteVenta/",
+									"SinkFileName": "DimClienteVenta.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimClienteVenta"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimGrupoVendedor",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimClienteVenta",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimGrupoVendedor/",
+									"SinkFileName": "DimGrupoVendedor.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimGrupoVendedor"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimMacroZona",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimGrupoVendedor",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimMacroZona/",
+									"SinkFileName": "DimMacroZona.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimMacroZona"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimMarca",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimMacroZona",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimMarca/",
+									"SinkFileName": "DimMarca.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimMarca"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimOrganizacionVentas",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimMarca",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimOrganizacionVentas/",
+									"SinkFileName": "DimOrganizacionVentas.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimOrganizacionVentas"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimPuestoExpedicion",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimOrganizacionVentas",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimPuestoExpedicion/",
+									"SinkFileName": "DimPuestoExpedicion.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimPuestoExpedicion"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimRegional",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimPuestoExpedicion",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimRegional/",
+									"SinkFileName": "DimRegional.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimRegional"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimSector",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimRegional",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimSector/",
+									"SinkFileName": "DimSector.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimSector"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimSegmento",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimSector",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimSegmento/",
+									"SinkFileName": "DimSegmento.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimSegmento"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimSociedad",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimSegmento",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimSociedad/",
+									"SinkFileName": "DimSociedad.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimSociedad"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimSubcanal",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimSociedad",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimSubcanal/",
+									"SinkFileName": "DimSubcanal.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimSubcanal"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimTipologia",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimSubcanal",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimTipologia/",
+									"SinkFileName": "DimTipologia.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimTipologia"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimZona",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimTipologia",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimZona/",
+									"SinkFileName": "DimZona.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimZona"
+								}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "4.CARGA_AZURE_TABLE"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SinkParquetRawGen2')]",
+				"[concat(variables('factoryId'), '/datasets/SinkAzureTableDWH')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/LoadDataRaw_Curated')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -699,7 +1843,7 @@
 							"parameters": {
 								"Environment": "Desarrollo",
 								"Process": "Ramo",
-								"SubProcess": "Comercial",
+								"SubProcess": "ComercialHana",
 								"Fac": "1"
 							}
 						}
@@ -1535,809 +2679,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataSAP_Raw')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "LkpFileOwners",
-						"description": "Lectura de parametrización de cargas.",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[audi].[uspReadFileOwners]",
-								"storedProcedureParameters": {
-									"Environment": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.Environment",
-											"type": "Expression"
-										}
-									},
-									"From": {
-										"type": "Int32",
-										"value": {
-											"value": "@pipeline().parameters.From",
-											"type": "Expression"
-										}
-									},
-									"Process": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.Process",
-											"type": "Expression"
-										}
-									},
-									"SubProcess": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.SubProcess",
-											"type": "Expression"
-										}
-									},
-									"To": {
-										"type": "Int32",
-										"value": {
-											"value": "@pipeline().parameters.To",
-											"type": "Expression"
-										}
-									}
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "SourceAzureSqlTableFramework",
-								"type": "DatasetReference",
-								"parameters": {
-									"tableName": "NA",
-									"Schema": "NA"
-								}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "ForEach",
-						"description": "Iteración de parametrización de cargas.",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "LkpFileOwners",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('LkpFileOwners').output.Value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "CopySAPRaw",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "SapTableSource",
-											"rfcTableOptions": {
-												"value": "@{item().SourceFilter}",
-												"type": "Expression"
-											},
-											"customRfcReadTableFunctionModule": "",
-											"rfcTableFields": {
-												"value": "@item().SourceColumnSelect",
-												"type": "Expression"
-											},
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "ParquetSink",
-											"storeSettings": {
-												"type": "AzureDataLakeStoreWriteSettings"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "SourceSapTableRaw",
-											"type": "DatasetReference",
-											"parameters": {
-												"tableName": {
-													"value": "@item().SourceFileName",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "SinkParquetRaw",
-											"type": "DatasetReference",
-											"parameters": {
-												"SinkFilePath": {
-													"value": "@item().SinkFilePath",
-													"type": "Expression"
-												},
-												"SinkFileName": {
-													"value": "@item().SinkFileName",
-													"type": "Expression"
-												},
-												"SourceFileExtension": {
-													"value": "@item().SinkFileExtension",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								},
-								{
-									"name": "Success",
-									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "CopySAPRaw",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
-										"storedProcedureParameters": {
-											"ExecutionDuration": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ExecutionError": {
-												"value": {
-													"value": "n/a",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ExecutionStart": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"FileName": {
-												"value": {
-													"value": "@item().SourceFileName",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"fkFileOwners": {
-												"value": {
-													"value": "@item().pkFileOwners",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"Pipeline": {
-												"value": {
-													"value": "@pipeline().Pipeline",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RowsCopied": {
-												"value": {
-													"value": "@if(contains(activity('CopySAPRaw').output,'rowsCopied'),activity('CopySAPRaw').output.rowsCopied,-1)",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"RowsRead": {
-												"value": {
-													"value": "@if(contains(activity('CopySAPRaw').output,'rowsRead'),activity('CopySAPRaw').output.rowsRead,-1)",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"StateOfExecutions": {
-												"value": {
-													"value": "1",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"TriggerName": {
-												"value": {
-													"value": "@pipeline().TriggerName",
-													"type": "Expression"
-												},
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Failure",
-									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "CopySAPRaw",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
-										"storedProcedureParameters": {
-											"ExecutionDuration": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ExecutionError": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.errors[0].Message",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ExecutionStart": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"FileName": {
-												"value": {
-													"value": "@item().SourceFileName",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"fkFileOwners": {
-												"value": {
-													"value": "@item().pkFileOwners",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"Pipeline": {
-												"value": {
-													"value": "@pipeline().Pipeline",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RowsCopied": {
-												"value": {
-													"value": "0",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"RowsRead": {
-												"value": {
-													"value": "0",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"StateOfExecutions": {
-												"value": {
-													"value": "0",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"TriggerName": {
-												"value": {
-													"value": "@pipeline().TriggerName",
-													"type": "Expression"
-												},
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								}
-							]
-						}
-					}
-				],
-				"parameters": {
-					"Environment": {
-						"type": "string",
-						"defaultValue": "Desarrollo"
-					},
-					"Process": {
-						"type": "string",
-						"defaultValue": "Ramo"
-					},
-					"SubProcess": {
-						"type": "string",
-						"defaultValue": "Comercial"
-					},
-					"From": {
-						"type": "int",
-						"defaultValue": 0
-					},
-					"To": {
-						"type": "int",
-						"defaultValue": 0
-					}
-				},
-				"folder": {
-					"name": "1.CARGA_RAW"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-08-26T13:38:29Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceAzureSqlTableFramework')]",
-				"[concat(variables('factoryId'), '/datasets/SourceSapTableRaw')]",
-				"[concat(variables('factoryId'), '/datasets/SinkParquetRaw')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataSAP_SQL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "LkpFileOwners",
-						"description": "Lectura de parametrización de cargas.",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[audi].[uspReadFileOwners]",
-								"storedProcedureParameters": {
-									"Environment": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.Environment",
-											"type": "Expression"
-										}
-									},
-									"From": {
-										"type": "Int32",
-										"value": {
-											"value": "@pipeline().parameters.From",
-											"type": "Expression"
-										}
-									},
-									"Process": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.Process",
-											"type": "Expression"
-										}
-									},
-									"SubProcess": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.SubProcess",
-											"type": "Expression"
-										}
-									},
-									"To": {
-										"type": "Int32",
-										"value": {
-											"value": "@pipeline().parameters.To",
-											"type": "Expression"
-										}
-									}
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "SourceAzureSqlTableFramework",
-								"type": "DatasetReference",
-								"parameters": {
-									"tableName": "NA",
-									"Schema": "NA"
-								}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "ForEach",
-						"description": "Iteración de parametrización de cargas.",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "LkpFileOwners",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('LkpFileOwners').output.Value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "CopySAPRaw",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "SapTableSource",
-											"rfcTableOptions": {
-												"value": "@{item().SourceFilter}",
-												"type": "Expression"
-											},
-											"customRfcReadTableFunctionModule": "",
-											"rfcTableFields": {
-												"value": "@item().SourceColumnSelect",
-												"type": "Expression"
-											},
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "AzureSqlSink"
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "SourceSapTableRaw",
-											"type": "DatasetReference",
-											"parameters": {
-												"tableName": {
-													"value": "@item().SourceFileName",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "SourceAzureSqlTableFramework",
-											"type": "DatasetReference",
-											"parameters": {
-												"tableName": {
-													"value": "@item().SinkFileName",
-													"type": "Expression"
-												},
-												"Schema": "RAMO"
-											}
-										}
-									]
-								},
-								{
-									"name": "Success",
-									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "CopySAPRaw",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
-										"storedProcedureParameters": {
-											"ExecutionDuration": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ExecutionError": {
-												"value": {
-													"value": "n/a",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ExecutionStart": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"FileName": {
-												"value": {
-													"value": "@item().SourceFileName",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"fkFileOwners": {
-												"value": {
-													"value": "@item().pkFileOwners",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"Pipeline": {
-												"value": {
-													"value": "@pipeline().Pipeline",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RowsCopied": {
-												"value": {
-													"value": "@if(contains(activity('CopySAPRaw').output,'rowsCopied'),activity('CopySAPRaw').output.rowsCopied,-1)",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"RowsRead": {
-												"value": {
-													"value": "@if(contains(activity('CopySAPRaw').output,'rowsRead'),activity('CopySAPRaw').output.rowsRead,-1)",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"StateOfExecutions": {
-												"value": {
-													"value": "1",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"TriggerName": {
-												"value": {
-													"value": "@pipeline().TriggerName",
-													"type": "Expression"
-												},
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Failure",
-									"description": "Registra en el usp [uspUpdateLogAuditoriaPactia] el estado de ejecución",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "CopySAPRaw",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[audi].[uspUpdateLogAuditoria]",
-										"storedProcedureParameters": {
-											"ExecutionDuration": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.executionDetails[0].detailedDurations",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ExecutionError": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.errors[0].Message",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ExecutionStart": {
-												"value": {
-													"value": "@activity('CopySAPRaw').output.executionDetails[0].start",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"FileName": {
-												"value": {
-													"value": "@item().SourceFileName",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"fkFileOwners": {
-												"value": {
-													"value": "@item().pkFileOwners",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"Pipeline": {
-												"value": {
-													"value": "@pipeline().Pipeline",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"RowsCopied": {
-												"value": {
-													"value": "0",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"RowsRead": {
-												"value": {
-													"value": "0",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"StateOfExecutions": {
-												"value": {
-													"value": "0",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"TriggerName": {
-												"value": {
-													"value": "@pipeline().TriggerName",
-													"type": "Expression"
-												},
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								}
-							]
-						}
-					}
-				],
-				"parameters": {
-					"Environment": {
-						"type": "string",
-						"defaultValue": "Desarrollo"
-					},
-					"Process": {
-						"type": "string",
-						"defaultValue": "Ramo"
-					},
-					"SubProcess": {
-						"type": "string",
-						"defaultValue": "Comercial"
-					},
-					"From": {
-						"type": "int",
-						"defaultValue": 0
-					},
-					"To": {
-						"type": "int",
-						"defaultValue": 0
-					}
-				},
-				"folder": {
-					"name": "1.CARGA_RAW"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-09-09T13:34:45Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceAzureSqlTableFramework')]",
-				"[concat(variables('factoryId'), '/datasets/SourceSapTableRaw')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/SinSQLLocal')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2373,6 +2714,37 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/SqlServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SinkAzureTableDWH')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SinkAzureTableStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SINK"
+				},
+				"annotations": [],
+				"type": "AzureTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SinkAzureTableStorage')]"
 			]
 		},
 		{
@@ -2464,6 +2836,55 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStoreGen2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceAzureBlobStorageDWH')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SourceAzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SinkFilePath": {
+						"type": "string"
+					},
+					"SinkFileName": {
+						"type": "string"
+					},
+					"SourceFileExtension": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SOURCES"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().SinkFileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().SinkFilePath",
+							"type": "Expression"
+						},
+						"container": "fsramo"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SourceAzureBlobStorage')]"
 			]
 		},
 		{
@@ -2711,6 +3132,32 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SinkAzureTableStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureTableStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('SinkAzureTableStorage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceAzureBlobStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('SourceAzureBlobStorage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SourceSapHana')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -2767,7 +3214,7 @@
 					"recurrence": {
 						"frequency": "Minute",
 						"interval": 1,
-						"startTime": "2020-10-13T15:00:00.000Z",
+						"startTime": "2020-10-13T15:00:00Z",
 						"timeZone": "UTC"
 					}
 				}
@@ -2787,7 +3234,7 @@
 					"recurrence": {
 						"frequency": "Minute",
 						"interval": 1,
-						"startTime": "2020-10-13T17:00:00.000Z",
+						"startTime": "2020-10-13T17:00:00Z",
 						"timeZone": "UTC"
 					}
 				}
@@ -2807,7 +3254,7 @@
 					"recurrence": {
 						"frequency": "Minute",
 						"interval": 1,
-						"startTime": "2020-10-13T19:00:00.000Z",
+						"startTime": "2020-10-13T19:00:00Z",
 						"timeZone": "UTC"
 					}
 				}
@@ -2827,7 +3274,7 @@
 					"recurrence": {
 						"frequency": "Minute",
 						"interval": 1,
-						"startTime": "2020-10-13T13:00:00.000Z",
+						"startTime": "2020-10-13T13:00:00Z",
 						"timeZone": "UTC"
 					}
 				}
@@ -2895,178 +3342,6 @@
 			"properties": {
 				"type": "SelfHosted",
 				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataDWH')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "AzureTableSink",
-								"azureTableInsertType": "merge",
-								"writeBatchSize": 10000
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceAzureBlobStorageDWH",
-								"type": "DatasetReference",
-								"parameters": {
-									"SinkFilePath": "CSV/DimCliente/",
-									"SinkFileName": "part-00000-tid-6538835321674005901-79c30d34-f410-46fe-8fb8-f5b1a7a7d436-2223-1-c000.csv",
-									"SourceFileExtension": "csv"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SinkAzureTableDWH",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "4.CARGA_AZURE_TABLE"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceAzureBlobStorageDWH')]",
-				"[concat(variables('factoryId'), '/datasets/SinkAzureTableDWH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceAzureBlobStorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('SourceAzureBlobStorage_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceAzureBlobStorageDWH')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SourceAzureBlobStorage",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"SinkFilePath": {
-						"type": "string"
-					},
-					"SinkFileName": {
-						"type": "string"
-					},
-					"SourceFileExtension": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "SOURCES"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().SinkFileName",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().SinkFilePath",
-							"type": "Expression"
-						},
-						"container": "fsramo"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SourceAzureBlobStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SinkAzureTableDWH')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SinkAzureTableStorage",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "SINK"
-				},
-				"annotations": [],
-				"type": "AzureTable",
-				"schema": [],
-				"typeProperties": {
-					"tableName": "DimCliente"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SinkAzureTableStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SinkAzureTableStorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureTableStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('SinkAzureTableStorage_connectionString')]"
-				}
 			},
 			"dependsOn": []
 		}
