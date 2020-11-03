@@ -3,62 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "FactPresupuesto",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "ParquetSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true
-						}
-					},
-					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "merge",
-						"writeBatchSize": 10000
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "SinkParquetRawGen2",
-						"type": "DatasetReference",
-						"parameters": {
-							"SinkFilePath": "PARQUET/DimClienteVenta/",
-							"SinkFileName": "part-00000-tid-3212672276922540794-57c27116-ae67-4e5a-9dd5-a047768773a8-464-1-c000.snappy",
-							"SourceFileExtension": "parquet"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "SinkAzureTableDWH",
-						"type": "DatasetReference",
-						"parameters": {
-							"TableName": "FactPresupuesto"
-						}
-					}
-				]
-			},
-			{
 				"name": "DimAgencia",
 				"type": "Copy",
 				"dependsOn": [],
@@ -613,7 +557,574 @@
 						"referenceName": "SinkAzureTableDWH",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimMacroZona"
+							"TableName": "DimMarca"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimOrganizacionVentas",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimMarca",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "replace",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimOrganizacionVentas/",
+							"SinkFileName": "DimOrganizacionVentas.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "DimOrganizacionVentas"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimPuestoExpedicion",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimOrganizacionVentas",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "replace",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimPuestoExpedicion/",
+							"SinkFileName": "DimPuestoExpedicion.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "DimPuestoExpedicion"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimRegional",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimPuestoExpedicion",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "replace",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimRegional/",
+							"SinkFileName": "DimRegional.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "DimRegional"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimSector",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimRegional",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "replace",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimSector/",
+							"SinkFileName": "DimSector.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "DimSector"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimSegmento",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimSector",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "replace",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimSegmento/",
+							"SinkFileName": "DimSegmento.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "DimSegmento"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimSociedad",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimSegmento",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "replace",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimSociedad/",
+							"SinkFileName": "DimSociedad.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "DimSociedad"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimSubcanal",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimSociedad",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "replace",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimSubcanal/",
+							"SinkFileName": "DimSubcanal.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "DimSubcanal"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimTipologia",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimSubcanal",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "replace",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimTipologia/",
+							"SinkFileName": "DimTipologia.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "DimTipologia"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimZona",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimTipologia",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						}
+					},
+					"sink": {
+						"type": "AzureTableSink",
+						"azureTableInsertType": "replace",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimZona/",
+							"SinkFileName": "DimZona.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkAzureTableDWH",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "DimZona"
 						}
 					}
 				]
