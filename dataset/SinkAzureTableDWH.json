@@ -5,6 +5,11 @@
 			"referenceName": "SinkAzureTableStorage",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"TableName": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "SINK"
 		},
@@ -12,7 +17,10 @@
 		"type": "AzureTable",
 		"schema": [],
 		"typeProperties": {
-			"tableName": "FactPresupuesto"
+			"tableName": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			}
 		}
 	}
 }
