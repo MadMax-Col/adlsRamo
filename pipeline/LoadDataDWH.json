@@ -5,7 +5,14 @@
 			{
 				"name": "FactPresupuesto",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "DimCanal",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -51,7 +58,10 @@
 				"outputs": [
 					{
 						"referenceName": "SinkAzureTableDWH",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "FactPresupuesto"
+						}
 					}
 				]
 			},
