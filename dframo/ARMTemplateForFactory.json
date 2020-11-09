@@ -1258,7 +1258,7 @@
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "DimZona",
+								"activity": "DimMaterial",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1315,87 +1315,13 @@
 								}
 							}
 						]
-					}
-				],
-				"folder": {
-					"name": "4.CARGA_AZURE_TABLE"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SinkParquetRawGen2')]",
-				"[concat(variables('factoryId'), '/datasets/SinkAzureTableDWH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataDWH_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "DimMaterial",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": true
-								}
-							},
-							"sink": {
-								"type": "AzureTableSink",
-								"azureTableInsertType": "replace",
-								"writeBatchSize": 10000
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SinkParquetRawGen2",
-								"type": "DatasetReference",
-								"parameters": {
-									"SinkFilePath": "DWH/DimMaterial/",
-									"SinkFileName": "DimMaterial.snappy",
-									"SourceFileExtension": "parquet"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SinkAzureTableDWH",
-								"type": "DatasetReference",
-								"parameters": {
-									"TableName": "DimMaterial"
-								}
-							}
-						]
 					},
 					{
 						"name": "DimListaPrecio",
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "DimMaterial",
+								"activity": "DimZona",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1578,6 +1504,144 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"TableName": "DimEstrato"
+								}
+							}
+						]
+					},
+					{
+						"name": "DimMaterial",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimEstrato",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimMaterial/",
+									"SinkFileName": "DimMaterial.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimMaterial"
+								}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "4.CARGA_AZURE_TABLE"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SinkParquetRawGen2')]",
+				"[concat(variables('factoryId'), '/datasets/SinkAzureTableDWH')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataDWH_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "DimMaterial",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": true
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimMaterial/",
+									"SinkFileName": "DimMaterial.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkAzureTableDWH",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "DimMaterial"
 								}
 							}
 						]
