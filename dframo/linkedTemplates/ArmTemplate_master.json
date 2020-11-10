@@ -95,26 +95,6 @@
 			"type": "string",
 			"defaultValue": "AZURE"
 		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment": {
-			"type": "string",
-			"defaultValue": "Desarrollo"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Process": {
-			"type": "string",
-			"defaultValue": "Ramo"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_SubProcess": {
-			"type": "string",
-			"defaultValue": "Comercial"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_From": {
-			"type": "int",
-			"defaultValue": 0
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_To": {
-			"type": "int",
-			"defaultValue": 0
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -225,21 +205,6 @@
 					},
 					"SqlServer_connectionString": {
 						"value": "[parameters('SqlServer_connectionString')]"
-					},
-					"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment": {
-						"value": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment')]"
-					},
-					"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Process": {
-						"value": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Process')]"
-					},
-					"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_SubProcess": {
-						"value": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_SubProcess')]"
-					},
-					"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_From": {
-						"value": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_From')]"
-					},
-					"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_To": {
-						"value": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_To')]"
 					}
 				}
 			},

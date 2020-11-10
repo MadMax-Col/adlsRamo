@@ -94,26 +94,6 @@
 		"SourceSapHana_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "AZURE"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment": {
-			"type": "string",
-			"defaultValue": "Desarrollo"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Process": {
-			"type": "string",
-			"defaultValue": "Ramo"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_SubProcess": {
-			"type": "string",
-			"defaultValue": "Comercial"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_From": {
-			"type": "int",
-			"defaultValue": 0
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_To": {
-			"type": "int",
-			"defaultValue": 0
 		}
 	},
 	"variables": {
@@ -3684,16 +3664,10 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "LoadDataSAPTable_Raw_Gen2",
+							"referenceName": "LoadDataSAP",
 							"type": "PipelineReference"
 						},
-						"parameters": {
-							"Environment": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment')]",
-							"Process": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Process')]",
-							"SubProcess": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_SubProcess')]",
-							"From": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_From')]",
-							"To": "[parameters('Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_To')]"
-						}
+						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -3715,7 +3689,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/LoadDataSAPTable_Raw_Gen2')]"
+				"[concat(variables('factoryId'), '/pipelines/LoadDataSAP')]"
 			]
 		},
 		{

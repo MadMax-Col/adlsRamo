@@ -71,21 +71,6 @@
 		"SourceSapHana_properties_typeProperties_userName": {
 			"value": "AZURE"
 		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Environment": {
-			"value": "Desarrollo"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_Process": {
-			"value": "Ramo"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_SubProcess": {
-			"value": "Comercial"
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_From": {
-			"value": 0
-		},
-		"Job_cargas_12am_properties_LoadDataSAPTable_Raw_Gen2_parameters_To": {
-			"value": 0
-		},
 		"containerUri": {
 			"value": ""
 		},
