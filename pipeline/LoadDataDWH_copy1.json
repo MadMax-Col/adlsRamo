@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DimMaterial",
+				"name": "DimModeloAtencion",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -43,8 +43,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/DimMaterial/",
-							"SinkFileName": "DimMaterial.snappy",
+							"SinkFilePath": "DWH/DimModeloAtencion/",
+							"SinkFileName": "DimModeloAtencion.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -54,7 +54,7 @@
 						"referenceName": "SinkAzureTableDWH",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimMaterial"
+							"TableName": "DimModeloAtencion"
 						}
 					}
 				]
