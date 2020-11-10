@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DimModeloAtencion",
+				"name": "DimCliente",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -19,8 +19,7 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": true
+							"recursive": true
 						}
 					},
 					"sink": {
@@ -43,8 +42,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/DimModeloAtencion/",
-							"SinkFileName": "DimModeloAtencion.snappy",
+							"SinkFilePath": "DWH/DimCliente/",
+							"SinkFileName": "DimCliente.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -54,7 +53,7 @@
 						"referenceName": "SinkAzureTableDWH",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimModeloAtencion"
+							"TableName": "DimCliente"
 						}
 					}
 				]
