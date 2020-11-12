@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DimMaterial",
+				"name": "FactFactura",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -19,8 +19,7 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": true
+							"recursive": true
 						}
 					},
 					"sink": {
@@ -43,8 +42,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/DimMaterial/",
-							"SinkFileName": "DimMaterial.snappy",
+							"SinkFilePath": "DWH/FactFactura/",
+							"SinkFileName": "FactFactura.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -54,7 +53,7 @@
 						"referenceName": "SinkAzureTableDWH",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimMaterial"
+							"TableName": "FactFactura"
 						}
 					}
 				]
