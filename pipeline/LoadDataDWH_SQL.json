@@ -89,7 +89,6 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [DWH].[FactPedido]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
@@ -154,7 +153,6 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [DWH].[FactFactura]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
