@@ -1,5 +1,5 @@
 {
-	"name": "LoadDataDWH_SQL",
+	"name": "LoadDataDWH_SQL_FACT",
 	"properties": {
 		"activities": [
 			{
