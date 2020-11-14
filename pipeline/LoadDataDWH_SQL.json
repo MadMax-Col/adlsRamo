@@ -86,9 +86,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -113,10 +112,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimAlmacen"
+							"tableName": "DimAlmacen",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -149,9 +149,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -176,10 +175,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimCanal"
+							"tableName": "DimCanal",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -212,9 +212,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -239,10 +238,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimCategoria"
+							"tableName": "DimCategoria",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -275,9 +275,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -302,16 +301,17 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimCliente"
+							"tableName": "DimCliente",
+							"Schema": "DWH"
 						}
 					}
 				]
 			},
 			{
-				"name": "DimClienteVenta",
+				"name": "DimGrupoVendedor",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -338,72 +338,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "SinkParquetRawGen2",
-						"type": "DatasetReference",
-						"parameters": {
-							"SinkFilePath": "DWH/DimClienteVenta/",
-							"SinkFileName": "DimClienteVenta.snappy",
-							"SourceFileExtension": "parquet"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "SinkAzureTableDWH",
-						"type": "DatasetReference",
-						"parameters": {
-							"TableName": "DimClienteVenta"
-						}
-					}
-				]
-			},
-			{
-				"name": "DimGrupoVendedor",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "DimClienteVenta",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "ParquetSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true
-						}
-					},
-					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -428,10 +364,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimGrupoVendedor"
+							"tableName": "DimGrupoVendedor",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -464,9 +401,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -491,10 +427,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimMacroZona"
+							"tableName": "DimMacroZona",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -527,9 +464,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -554,10 +490,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimMarca"
+							"tableName": "DimMarca",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -590,9 +527,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -617,10 +553,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimOrganizacionVentas"
+							"tableName": "DimOrganizacionVentas",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -653,9 +590,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -680,10 +616,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimPuestoExpedicion"
+							"tableName": "DimPuestoExpedicion",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -716,9 +653,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -743,10 +679,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimRegional"
+							"tableName": "DimRegional",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -779,9 +716,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -806,10 +742,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimSector"
+							"tableName": "DimSector",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -842,9 +779,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -869,10 +805,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimSegmento"
+							"tableName": "DimSegmento",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -905,9 +842,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -932,10 +868,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimSociedad"
+							"tableName": "DimSociedad",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -968,9 +905,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -995,10 +931,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimSubcanal"
+							"tableName": "DimSubcanal",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -1031,9 +968,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -1058,10 +994,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimTipologia"
+							"tableName": "DimTipologia",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -1094,9 +1031,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -1121,10 +1057,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimZona"
+							"tableName": "DimZona",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -1158,9 +1095,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -1185,10 +1121,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimListaPrecio"
+							"tableName": "DimListaPrecio",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -1222,9 +1159,7 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -1249,10 +1184,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimModeloAtencion"
+							"tableName": "DimModeloAtencion",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -1286,9 +1222,7 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -1313,10 +1247,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimEstrato"
+							"tableName": "DimEstrato",
+							"Schema": "DWH"
 						}
 					}
 				]
@@ -1350,9 +1285,8 @@
 						}
 					},
 					"sink": {
-						"type": "AzureTableSink",
-						"azureTableInsertType": "replace",
-						"writeBatchSize": 10000
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -1377,10 +1311,11 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkAzureTableDWH",
+						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"TableName": "DimMaterial"
+							"tableName": "DimMaterial",
+							"Schema": "DWH"
 						}
 					}
 				]
