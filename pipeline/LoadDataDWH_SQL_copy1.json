@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DimCliente",
+				"name": "DimAgencia",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -24,7 +24,12 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"tableOption": "autoCreate"
+						"preCopyScript": {
+							"value": "@{concat('TRUNCATE TABLE [DWH].',pipeline().Pipeline)}",
+							"type": "Expression"
+						},
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
 					"translator": {
@@ -41,8 +46,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/DimCliente/",
-							"SinkFileName": "DimCliente.snappy",
+							"SinkFilePath": "DWH/DimAgencia/",
+							"SinkFileName": "DimAgencia.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -52,7 +57,7 @@
 						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"tableName": "DimCliente",
+							"tableName": "DimAgencia",
 							"Schema": "DWH"
 						}
 					}
