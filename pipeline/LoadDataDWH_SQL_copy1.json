@@ -24,10 +24,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": {
-							"value": "@{concat('TRUNCATE TABLE [DWH].',pipeline().Pipeline)}",
-							"type": "Expression"
-						},
+						"preCopyScript": "TRUNCATE TABLE [DWH].[DimAgencia]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
