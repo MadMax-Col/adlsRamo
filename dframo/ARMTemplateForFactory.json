@@ -1654,7 +1654,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimAgencia]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -1717,7 +1719,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimAlmacen]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -1780,7 +1784,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimCanal]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -1843,7 +1849,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimCategoria]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -1906,7 +1914,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimCliente]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -1969,7 +1979,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimGrupoVendedor]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2032,7 +2044,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimMacroZona]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2095,7 +2109,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimMarca]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2158,7 +2174,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimOrganizacionVentas]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2221,7 +2239,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimPuestoExpedicion]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2284,7 +2304,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimRegional]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2347,7 +2369,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimSector]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2410,7 +2434,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimSegmento]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2473,7 +2499,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimSociedad]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2536,7 +2564,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimSubcanal]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2599,7 +2629,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimTipologia]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2662,7 +2694,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimZona]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2726,7 +2760,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimListaPrecio]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2790,7 +2826,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimModeloAtencion]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2854,7 +2892,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimEstrato]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -2918,7 +2958,9 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimMaterial]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -3175,7 +3217,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "DimCliente",
+						"name": "DimAgencia",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -3196,7 +3238,12 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"tableOption": "autoCreate"
+								"preCopyScript": {
+									"value": "@{concat('TRUNCATE TABLE [DWH].',pipeline().Pipeline)}",
+									"type": "Expression"
+								},
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -3213,8 +3260,8 @@
 								"referenceName": "SinkParquetRawGen2",
 								"type": "DatasetReference",
 								"parameters": {
-									"SinkFilePath": "DWH/DimCliente/",
-									"SinkFileName": "DimCliente.snappy",
+									"SinkFilePath": "DWH/DimAgencia/",
+									"SinkFileName": "DimAgencia.snappy",
 									"SourceFileExtension": "parquet"
 								}
 							}
@@ -3224,7 +3271,7 @@
 								"referenceName": "SourceAzureSqlTableFramework",
 								"type": "DatasetReference",
 								"parameters": {
-									"tableName": "DimCliente",
+									"tableName": "DimAgencia",
 									"Schema": "DWH"
 								}
 							}
