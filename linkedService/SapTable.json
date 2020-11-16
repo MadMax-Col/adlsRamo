@@ -11,7 +11,7 @@
 			"userName": "igerencia",
 			"server": "192.168.220.217",
 			"systemNumber": "10",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI4NDg5NWNkMS01YmY3LTQ4OGMtODcwMS0xZWNkNjUzMWNlZDUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIyMWRhZTRlYi1jMjBmLTRjNjAtYTU0Ny04NmIzMDBhNWMyMGEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "ADFRamoIR",
