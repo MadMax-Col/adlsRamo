@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DimAgencia",
+				"name": "DimZona",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -19,12 +19,14 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"recursive": true
+							"recursive": true,
+							"wildcardFolderPath": "DWH/DimZona/",
+							"wildcardFileName": "*.parquet"
 						}
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [DWH].[DimAgencia]",
+						"preCopyScript": "TRUNCATE TABLE [DWH].[DimZona]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
@@ -43,8 +45,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/DimAgencia/",
-							"SinkFileName": "DimAgencia.snappy",
+							"SinkFilePath": "DWH/DimZona/",
+							"SinkFileName": "DimZona.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -54,7 +56,7 @@
 						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"tableName": "DimAgencia",
+							"tableName": "DimZona",
 							"Schema": "DWH"
 						}
 					}
