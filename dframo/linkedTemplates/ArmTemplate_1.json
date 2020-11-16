@@ -3825,25 +3825,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SourceSapHana')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SourceSapHana",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "SOURCES"
-				},
-				"annotations": [],
-				"type": "SapHanaTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/SourceSapHanaRaw')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
