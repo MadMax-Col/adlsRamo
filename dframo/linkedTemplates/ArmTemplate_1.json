@@ -1579,7 +1579,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimAgencia/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -1644,7 +1646,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimAlmacen/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -1709,7 +1713,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimCanal/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -1774,7 +1780,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimCategoria/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -1839,7 +1847,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimCliente/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -1904,7 +1914,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimGrupoVendedor/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -1969,7 +1981,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimMacroZona/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2034,7 +2048,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimMarca/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2099,7 +2115,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimOrganizacionVentas/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2164,7 +2182,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimPuestoExpedicion/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2229,7 +2249,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimRegional/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2294,7 +2316,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimSector/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2359,7 +2383,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimSegmento/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2424,7 +2450,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimSociedad/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2489,7 +2517,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimSubcanal/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2554,7 +2584,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimTipologia/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2619,7 +2651,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimZona/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -2685,6 +2719,8 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
+									"wildcardFolderPath": "DWH/DimListaPrecio/",
+									"wildcardFileName": "*.parquet",
 									"enablePartitionDiscovery": true
 								}
 							},
@@ -2751,6 +2787,8 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
+									"wildcardFolderPath": "DWH/DimModeloAtencion/",
+									"wildcardFileName": "*.parquet",
 									"enablePartitionDiscovery": true
 								}
 							},
@@ -2817,6 +2855,8 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
+									"wildcardFolderPath": "DWH/DimEstrato/",
+									"wildcardFileName": "*.parquet",
 									"enablePartitionDiscovery": true
 								}
 							},
@@ -2883,6 +2923,8 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
+									"wildcardFolderPath": "DWH/DimMaterial/",
+									"wildcardFileName": "*.parquet",
 									"enablePartitionDiscovery": true
 								}
 							},
@@ -3141,7 +3183,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "DimAgencia",
+						"name": "DimZona",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -3157,12 +3199,14 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimZona/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [DWH].[DimAgencia]",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimZona]",
 								"tableOption": "autoCreate",
 								"disableMetricsCollection": false
 							},
@@ -3181,8 +3225,8 @@
 								"referenceName": "SinkParquetRawGen2",
 								"type": "DatasetReference",
 								"parameters": {
-									"SinkFilePath": "DWH/DimAgencia/",
-									"SinkFileName": "DimAgencia.snappy",
+									"SinkFilePath": "DWH/DimZona/",
+									"SinkFileName": "DimZona.snappy",
 									"SourceFileExtension": "parquet"
 								}
 							}
@@ -3192,7 +3236,7 @@
 								"referenceName": "SourceAzureSqlTableFramework",
 								"type": "DatasetReference",
 								"parameters": {
-									"tableName": "DimAgencia",
+									"tableName": "DimZona",
 									"Schema": "DWH"
 								}
 							}
