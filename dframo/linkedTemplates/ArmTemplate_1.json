@@ -2965,6 +2965,73 @@
 								}
 							}
 						]
+					},
+					{
+						"name": "DimEncargadoZona",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimMaterial",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimEncargadoZona/",
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimEncargadoZona]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimEncargadoZona/",
+									"SinkFileName": "DimEncargadoZona.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "DimEncargadoZona",
+									"Schema": "DWH"
+								}
+							}
+						]
 					}
 				],
 				"folder": {
@@ -2997,7 +3064,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/FactPresupuesto/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -3062,7 +3131,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/FactPedido/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -3127,7 +3198,9 @@
 								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFolderPath": "DWH/FactFactura/",
+									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
@@ -3183,7 +3256,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "DimZona",
+						"name": "DimEncargadoZona",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -3200,13 +3273,12 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
-									"wildcardFolderPath": "DWH/DimZona/",
+									"wildcardFolderPath": "DWH/DimEncargadoZona/",
 									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [DWH].[DimZona]",
 								"tableOption": "autoCreate",
 								"disableMetricsCollection": false
 							},
@@ -3225,8 +3297,8 @@
 								"referenceName": "SinkParquetRawGen2",
 								"type": "DatasetReference",
 								"parameters": {
-									"SinkFilePath": "DWH/DimZona/",
-									"SinkFileName": "DimZona.snappy",
+									"SinkFilePath": "DWH/DimEncargadoZona/",
+									"SinkFileName": "DimEncargadoZona.snappy",
 									"SourceFileExtension": "parquet"
 								}
 							}
@@ -3236,7 +3308,7 @@
 								"referenceName": "SourceAzureSqlTableFramework",
 								"type": "DatasetReference",
 								"parameters": {
-									"tableName": "DimZona",
+									"tableName": "DimEncargadoZona",
 									"Schema": "DWH"
 								}
 							}
