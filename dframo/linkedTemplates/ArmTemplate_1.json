@@ -3272,7 +3272,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [DWH].[FactFactAbastecimiento]",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[FactAbastecimiento]",
 								"tableOption": "autoCreate",
 								"disableMetricsCollection": false
 							},
