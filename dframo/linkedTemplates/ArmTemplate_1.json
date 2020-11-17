@@ -3256,7 +3256,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "DimEncargadoZona",
+						"name": "FactPresupuesto",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -3273,12 +3273,13 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
-									"wildcardFolderPath": "DWH/DimEncargadoZona/",
+									"wildcardFolderPath": "DWH/FactPresupuesto/",
 									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
 								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[FactPresupuesto]",
 								"tableOption": "autoCreate",
 								"disableMetricsCollection": false
 							},
@@ -3297,8 +3298,8 @@
 								"referenceName": "SinkParquetRawGen2",
 								"type": "DatasetReference",
 								"parameters": {
-									"SinkFilePath": "DWH/DimEncargadoZona/",
-									"SinkFileName": "DimEncargadoZona.snappy",
+									"SinkFilePath": "DWH/FactPresupuesto/",
+									"SinkFileName": "FactPresupuesto.snappy",
 									"SourceFileExtension": "parquet"
 								}
 							}
@@ -3308,7 +3309,7 @@
 								"referenceName": "SourceAzureSqlTableFramework",
 								"type": "DatasetReference",
 								"parameters": {
-									"tableName": "DimEncargadoZona",
+									"tableName": "FactPresupuesto",
 									"Schema": "DWH"
 								}
 							}
