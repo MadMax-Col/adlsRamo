@@ -19,7 +19,9 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"recursive": true
+							"recursive": true,
+							"wildcardFolderPath": "DWH/FactPresupuesto/",
+							"wildcardFileName": "*.parquet"
 						}
 					},
 					"sink": {
@@ -84,7 +86,9 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"recursive": true
+							"recursive": true,
+							"wildcardFolderPath": "DWH/FactPedido/",
+							"wildcardFileName": "*.parquet"
 						}
 					},
 					"sink": {
@@ -149,7 +153,9 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"recursive": true
+							"recursive": true,
+							"wildcardFolderPath": "DWH/FactFactura/",
+							"wildcardFileName": "*.parquet"
 						}
 					},
 					"sink": {
