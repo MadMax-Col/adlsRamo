@@ -195,6 +195,73 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "FactAbastecimiento",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "FactFactura",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "DWH/FactAbastecimiento/",
+							"wildcardFileName": "*.parquet"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [DWH].[FactFactAbastecimiento]",
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/FactAbastecimiento/",
+							"SinkFileName": "FactAbastecimiento.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SourceAzureSqlTableFramework",
+						"type": "DatasetReference",
+						"parameters": {
+							"tableName": "FactAbastecimiento",
+							"Schema": "DWH"
+						}
+					}
+				]
 			}
 		],
 		"folder": {
