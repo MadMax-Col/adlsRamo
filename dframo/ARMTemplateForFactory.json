@@ -1627,7 +1627,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataDWH_SQL')]",
+			"name": "[concat(parameters('factoryName'), '/LoadDataDWH_SQL_DIM')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -3393,155 +3393,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataDWH_SQL_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "FactAbastecimiento",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"wildcardFolderPath": "DWH/FactAbastecimiento/",
-									"wildcardFileName": "*.parquet"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"tableOption": "autoCreate",
-								"disableMetricsCollection": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SinkParquetRawGen2",
-								"type": "DatasetReference",
-								"parameters": {
-									"SinkFilePath": "DWH/FactAbastecimiento/",
-									"SinkFileName": "FactAbastecimiento.snappy",
-									"SourceFileExtension": "parquet"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SourceAzureSqlTableFramework",
-								"type": "DatasetReference",
-								"parameters": {
-									"tableName": "FactAbastecimiento",
-									"Schema": "DWH"
-								}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "4.CARGA_AZURE_TABLE"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SinkParquetRawGen2')]",
-				"[concat(variables('factoryId'), '/datasets/SourceAzureSqlTableFramework')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataDWH_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "FactFactura",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true
-								}
-							},
-							"sink": {
-								"type": "AzureTableSink",
-								"azureTableInsertType": "replace",
-								"writeBatchSize": 10000
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SinkParquetRawGen2",
-								"type": "DatasetReference",
-								"parameters": {
-									"SinkFilePath": "DWH/FactFactura/",
-									"SinkFileName": "FactFactura.snappy",
-									"SourceFileExtension": "parquet"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SinkAzureTableDWH",
-								"type": "DatasetReference",
-								"parameters": {
-									"TableName": "FactFactura"
-								}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "4.CARGA_AZURE_TABLE"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SinkParquetRawGen2')]",
-				"[concat(variables('factoryId'), '/datasets/SinkAzureTableDWH')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/LoadDataRaw_Curated')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -4956,44 +4807,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SinSQLLocal')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SqlServer",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"tableName": {
-						"type": "string"
-					},
-					"Schema": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "SINK"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().Schema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().tableName",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SqlServer')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/SinkAzureTableDWH')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -5022,51 +4835,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/SinkAzureTableStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SinkParquetRaw')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStore",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"SinkFilePath": {
-						"type": "string"
-					},
-					"SinkFileName": {
-						"type": "string"
-					},
-					"SourceFileExtension": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "SINK"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureDataLakeStoreLocation",
-						"fileName": {
-							"value": "@{dataset().SinkFileName}.@{dataset().SourceFileExtension}",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().SinkFilePath",
-							"type": "Expression"
-						}
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStore')]"
 			]
 		},
 		{
@@ -5113,55 +4881,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStoreGen2')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceAzureBlobStorageDWH')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SourceAzureBlobStorage",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"SinkFilePath": {
-						"type": "string"
-					},
-					"SinkFileName": {
-						"type": "string"
-					},
-					"SourceFileExtension": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "SOURCES"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().SinkFileName",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().SinkFilePath",
-							"type": "Expression"
-						},
-						"container": "fsramo"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SourceAzureBlobStorage')]"
 			]
 		},
 		{
@@ -5594,6 +5313,83 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataDWH_SQL_FACT_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "FactPedido",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "DWH/FactPedido/",
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[FactPedido]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/FactPedido/",
+									"SinkFileName": "FactPedido.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "FactPedido",
+									"Schema": "DWH"
+								}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "4.CARGA_AZURE_TABLE"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SinkParquetRawGen2')]",
+				"[concat(variables('factoryId'), '/datasets/SourceAzureSqlTableFramework')]"
+			]
 		}
 	]
 }

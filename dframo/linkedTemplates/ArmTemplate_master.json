@@ -149,6 +149,9 @@
 					"SourceSapHana_password": {
 						"value": "[parameters('SourceSapHana_password')]"
 					},
+					"SqlServer_connectionString": {
+						"value": "[parameters('SqlServer_connectionString')]"
+					},
 					"AzureDataLakeStore_properties_typeProperties_dataLakeStoreUri": {
 						"value": "[parameters('AzureDataLakeStore_properties_typeProperties_dataLakeStoreUri')]"
 					},
@@ -202,9 +205,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"SqlServer_connectionString": {
-						"value": "[parameters('SqlServer_connectionString')]"
 					}
 				}
 			},
