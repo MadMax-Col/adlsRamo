@@ -1773,6 +1773,80 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataDWH_SQL_FACT_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "FactPresupuesto",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "DWH/FactPresupuesto/",
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[FactPresupuesto]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/FactPresupuesto/",
+									"SinkFileName": "FactPresupuesto.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "FactPresupuesto",
+									"Schema": "DWH"
+								}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "4.CARGA_AZURE_TABLE"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LoadDataRaw_Curated')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2300,80 +2374,6 @@
 						"type": "Expression"
 					}
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataDWH_SQL_FACT_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "FactPedido",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"wildcardFolderPath": "DWH/FactPedido/",
-									"wildcardFileName": "*.parquet"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [DWH].[FactPedido]",
-								"tableOption": "autoCreate",
-								"disableMetricsCollection": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SinkParquetRawGen2",
-								"type": "DatasetReference",
-								"parameters": {
-									"SinkFilePath": "DWH/FactPedido/",
-									"SinkFileName": "FactPedido.snappy",
-									"SourceFileExtension": "parquet"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SourceAzureSqlTableFramework",
-								"type": "DatasetReference",
-								"parameters": {
-									"tableName": "FactPedido",
-									"Schema": "DWH"
-								}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "4.CARGA_AZURE_TABLE"
-				},
-				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -3295,6 +3295,27 @@
 								"Fac": "1"
 							}
 						}
+					},
+					{
+						"name": "LoadDataDWH_SQL_FACT",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "LoadDataRaw_CuratedHana",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataDWH_SQL_FACT",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
 					}
 				],
 				"folder": {
@@ -3307,7 +3328,8 @@
 				"[concat(variables('factoryId'), '/pipelines/LoadDataSAPTable_Raw_Gen2')]",
 				"[concat(variables('factoryId'), '/pipelines/LoadDataSAPHana_Raw_Gen2')]",
 				"[concat(variables('factoryId'), '/pipelines/LoadDataRaw_Enriched')]",
-				"[concat(variables('factoryId'), '/pipelines/LoadDataRaw_Curated')]"
+				"[concat(variables('factoryId'), '/pipelines/LoadDataRaw_Curated')]",
+				"[concat(variables('factoryId'), '/pipelines/LoadDataDWH_SQL_FACT')]"
 			]
 		},
 		{
