@@ -3123,7 +3123,14 @@
 					{
 						"name": "FactPresupuesto",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "DBFactPresupuesto",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -3380,6 +3387,26 @@
 								}
 							}
 						]
+					},
+					{
+						"name": "DBFactPresupuesto",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/DWH/FactPresupuesto"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"folder": {
@@ -3389,7 +3416,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SinkParquetRawGen2')]",
-				"[concat(variables('factoryId'), '/datasets/SourceAzureSqlTableFramework')]"
+				"[concat(variables('factoryId'), '/datasets/SourceAzureSqlTableFramework')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks')]"
 			]
 		},
 		{
