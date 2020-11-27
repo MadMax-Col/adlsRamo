@@ -1575,7 +1575,7 @@
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "FactPresupuesto",
+								"activity": "DBFactPedido",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1642,7 +1642,7 @@
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "FactPedido",
+								"activity": "DBFactFacturas",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1790,6 +1790,60 @@
 							"referenceName": "AzureDatabricks",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "DBFactPedido",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "FactPresupuesto",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/DWH/FactPedidos"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "DBFactFacturas",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "FactPedido",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/DWH/FactFacturas"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"folder": {
@@ -1806,7 +1860,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "FactFactura",
+						"name": "FactPedido",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -1823,12 +1877,13 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
-									"wildcardFolderPath": "DWH/FactFactura/",
+									"wildcardFolderPath": "DWH/FactPedido/",
 									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
 								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[FactPedido]",
 								"tableOption": "autoCreate",
 								"disableMetricsCollection": false
 							},
@@ -1847,8 +1902,8 @@
 								"referenceName": "SinkParquetRawGen2",
 								"type": "DatasetReference",
 								"parameters": {
-									"SinkFilePath": "DWH/FactFactura/",
-									"SinkFileName": "FactFactura.snappy",
+									"SinkFilePath": "DWH/FactPedido/",
+									"SinkFileName": "FactPedido.snappy",
 									"SourceFileExtension": "parquet"
 								}
 							}
@@ -1858,7 +1913,7 @@
 								"referenceName": "SourceAzureSqlTableFramework",
 								"type": "DatasetReference",
 								"parameters": {
-									"tableName": "FactFactura",
+									"tableName": "FactPedido",
 									"Schema": "DWH"
 								}
 							}
