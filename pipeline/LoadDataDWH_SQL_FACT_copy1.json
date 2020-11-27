@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "FactFactura",
+				"name": "FactPedido",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -20,12 +20,13 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "DWH/FactFactura/",
+							"wildcardFolderPath": "DWH/FactPedido/",
 							"wildcardFileName": "*.parquet"
 						}
 					},
 					"sink": {
 						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [DWH].[FactPedido]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
@@ -44,8 +45,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/FactFactura/",
-							"SinkFileName": "FactFactura.snappy",
+							"SinkFilePath": "DWH/FactPedido/",
+							"SinkFileName": "FactPedido.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -55,7 +56,7 @@
 						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"tableName": "FactFactura",
+							"tableName": "FactPedido",
 							"Schema": "DWH"
 						}
 					}
