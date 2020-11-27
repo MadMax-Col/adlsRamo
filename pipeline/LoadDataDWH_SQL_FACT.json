@@ -74,7 +74,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "FactPresupuesto",
+						"activity": "DBFactPedido",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -141,7 +141,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "FactPedido",
+						"activity": "DBFactFacturas",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -284,6 +284,60 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebookPath": "/DWH/FactPresupuesto"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "DBFactPedido",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "FactPresupuesto",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/DWH/FactPedidos"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "DBFactFacturas",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "FactPedido",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/DWH/FactFacturas"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks",
