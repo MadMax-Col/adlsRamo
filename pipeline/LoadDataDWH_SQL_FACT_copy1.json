@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "FactPedido",
+				"name": "FactCombos",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -20,13 +20,12 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "DWH/FactPedido/",
+							"wildcardFolderPath": "DWH/FactCombos/",
 							"wildcardFileName": "*.parquet"
 						}
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [DWH].[FactPedido]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
@@ -45,8 +44,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/FactPedido/",
-							"SinkFileName": "FactPedido.snappy",
+							"SinkFilePath": "DWH/FactCombos/",
+							"SinkFileName": "FactCombos.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -56,7 +55,7 @@
 						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"tableName": "FactPedido",
+							"tableName": "FactCombos",
 							"Schema": "DWH"
 						}
 					}
