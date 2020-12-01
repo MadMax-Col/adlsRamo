@@ -55,7 +55,7 @@
 						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"tableName": "DimEncargadoZona",
+							"tableName": "DimClaseMovimiento",
 							"Schema": "DWH"
 						}
 					}
