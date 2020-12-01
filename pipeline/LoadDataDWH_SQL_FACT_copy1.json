@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "FactMovimientosInventario",
+				"name": "FactCierreAgencia",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -20,7 +20,7 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "DWH/FactMovimientosInventario/",
+							"wildcardFolderPath": "DWH/FactCierreAgencia/",
 							"wildcardFileName": "*.parquet"
 						}
 					},
@@ -44,8 +44,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/FactMovimientosInventario/",
-							"SinkFileName": "FactMovimientosInventario.snappy",
+							"SinkFilePath": "DWH/FactCierreAgencia/",
+							"SinkFileName": "FactCierreAgencia.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -55,7 +55,7 @@
 						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"tableName": "FactMovimientosInventario",
+							"tableName": "FactCierreAgencia",
 							"Schema": "DWH"
 						}
 					}
