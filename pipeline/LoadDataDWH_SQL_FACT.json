@@ -410,6 +410,73 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "FactMovimientosInventario",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "FactCombos",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "DWH/FactMovimientosInventario/",
+							"wildcardFileName": "*.parquet"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [DWH].[FactMovimientosInventario]",
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/FactMovimientosInventario/",
+							"SinkFileName": "FactMovimientosInventario.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SourceAzureSqlTableFramework",
+						"type": "DatasetReference",
+						"parameters": {
+							"tableName": "FactMovimientosInventario",
+							"Schema": "DWH"
+						}
+					}
+				]
 			}
 		],
 		"folder": {
