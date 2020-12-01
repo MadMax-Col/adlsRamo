@@ -26,7 +26,6 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [DWH].[FactMovimientosInventario]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
