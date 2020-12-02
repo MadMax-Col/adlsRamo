@@ -27,7 +27,6 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [DWH].[DimMaterial]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
