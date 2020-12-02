@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DimClaseMovimiento",
+				"name": "DimTipoPT",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -20,7 +20,7 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "DWH/DimClaseMovimiento/",
+							"wildcardFolderPath": "DWH/DimTipoPT/",
 							"wildcardFileName": "*.parquet"
 						}
 					},
@@ -44,8 +44,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/DimClaseMovimiento/",
-							"SinkFileName": "DimClaseMovimiento.snappy",
+							"SinkFilePath": "DWH/DimTipoPT/",
+							"SinkFileName": "DimTipoPT.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -55,7 +55,7 @@
 						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"tableName": "DimClaseMovimiento",
+							"tableName": "DimTipoPT",
 							"Schema": "DWH"
 						}
 					}
