@@ -4469,27 +4469,6 @@
 								"Fac": "1"
 							}
 						}
-					},
-					{
-						"name": "LoadDataDWH_SQL_FACT",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "LoadDataRaw_CuratedHana",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "LoadDataDWH_SQL_FACT",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
 					}
 				],
 				"folder": {
@@ -4502,8 +4481,7 @@
 				"[concat(variables('factoryId'), '/pipelines/LoadDataSAPTable_Raw_Gen2')]",
 				"[concat(variables('factoryId'), '/pipelines/LoadDataSAPHana_Raw_Gen2')]",
 				"[concat(variables('factoryId'), '/pipelines/LoadDataRaw_Enriched')]",
-				"[concat(variables('factoryId'), '/pipelines/LoadDataRaw_Curated')]",
-				"[concat(variables('factoryId'), '/pipelines/LoadDataDWH_SQL_FACT')]"
+				"[concat(variables('factoryId'), '/pipelines/LoadDataRaw_Curated')]"
 			]
 		},
 		{
