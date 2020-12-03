@@ -3078,6 +3078,73 @@
 								}
 							}
 						]
+					},
+					{
+						"name": "DimTipoPT",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DimClaseMovimiento",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "DWH/DimTipoPT/",
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[DimTipoPT]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/DimTipoPT/",
+									"SinkFileName": "DimTipoPT.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "DimTipoPT",
+									"Schema": "DWH"
+								}
+							}
+						]
 					}
 				],
 				"folder": {
@@ -3651,9 +3718,16 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "DimClaseMovimiento",
+						"name": "FactPedido",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "DBFactPedido",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -3668,12 +3742,13 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
-									"wildcardFolderPath": "DWH/DimClaseMovimiento/",
+									"wildcardFolderPath": "DWH/FactPedido/",
 									"wildcardFileName": "*.parquet"
 								}
 							},
 							"sink": {
 								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[FactPedido]",
 								"tableOption": "autoCreate",
 								"disableMetricsCollection": false
 							},
@@ -3692,8 +3767,8 @@
 								"referenceName": "SinkParquetRawGen2",
 								"type": "DatasetReference",
 								"parameters": {
-									"SinkFilePath": "DWH/DimClaseMovimiento/",
-									"SinkFileName": "DimClaseMovimiento.snappy",
+									"SinkFilePath": "DWH/FactPedido/",
+									"SinkFileName": "FactPedido.snappy",
 									"SourceFileExtension": "parquet"
 								}
 							}
@@ -3703,11 +3778,31 @@
 								"referenceName": "SourceAzureSqlTableFramework",
 								"type": "DatasetReference",
 								"parameters": {
-									"tableName": "DimClaseMovimiento",
+									"tableName": "FactPedido",
 									"Schema": "DWH"
 								}
 							}
 						]
+					},
+					{
+						"name": "DBFactPedido",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/DWH/FactPedidos"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"folder": {
