@@ -100,6 +100,46 @@
 						"Fac": "1"
 					}
 				}
+			},
+			{
+				"name": "LoadDataDWH_SQL_DIM",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LoadDataRaw_CuratedHana",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LoadDataDWH_SQL_DIM",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LoadDataDWH_SQL_FACT",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LoadDataDWH_SQL_DIM",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LoadDataDWH_SQL_FACT",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
 			}
 		],
 		"folder": {
