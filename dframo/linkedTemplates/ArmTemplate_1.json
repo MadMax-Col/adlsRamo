@@ -3722,7 +3722,7 @@
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "DBFactFacturas",
+								"activity": "FactPedido",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -3785,8 +3785,8 @@
 						]
 					},
 					{
-						"name": "DBFactFacturas",
-						"type": "DatabricksNotebook",
+						"name": "FactPedido",
+						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
@@ -3797,12 +3797,52 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/DWH/FactFacturas"
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "DWH/FactPedido/",
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [DWH].[FactPedido]",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
 						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks",
-							"type": "LinkedServiceReference"
-						}
+						"inputs": [
+							{
+								"referenceName": "SinkParquetRawGen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"SinkFilePath": "DWH/FactPedido/",
+									"SinkFileName": "FactPedido.snappy",
+									"SourceFileExtension": "parquet"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SourceAzureSqlTableFramework",
+								"type": "DatasetReference",
+								"parameters": {
+									"tableName": "FactPedido",
+									"Schema": "DWH"
+								}
+							}
+						]
 					}
 				],
 				"folder": {
