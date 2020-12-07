@@ -208,7 +208,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "FactFactura",
+						"activity": "DBFactAbastecimiento",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -349,7 +349,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "FactAbastecimiento",
+						"activity": "DBFactCombos",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -416,7 +416,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "FactCombos",
+						"activity": "DBFactMovimientosInventario",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -483,7 +483,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "FactMovimientosInventario",
+						"activity": "DBFactCierreAgencia",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -544,6 +544,114 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "DBFactAbastecimiento",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "FactFactura",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/DWH/FactAbastecimiento"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "DBFactCombos",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "FactAbastecimiento",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/DWH/FactCombos"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "DBFactMovimientosInventario",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "FactCombos",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/DWH/FactMovimientosInventario"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "DBFactCierreAgencia",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "FactMovimientosInventario",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/DWH/FactCierreAgencia"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"folder": {
