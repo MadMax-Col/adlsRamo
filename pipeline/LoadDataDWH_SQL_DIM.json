@@ -1411,7 +1411,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "DimMaterial",
+						"activity": "DimCanastas",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -1602,6 +1602,73 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"tableName": "DimTipoPT",
+							"Schema": "DWH"
+						}
+					}
+				]
+			},
+			{
+				"name": "DimCanastas",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DimMaterial",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "DWH/DimCanastas/",
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": true
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SinkParquetRawGen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SinkFilePath": "DWH/DimCanastas/",
+							"SinkFileName": "DimCanastas.snappy",
+							"SourceFileExtension": "parquet"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SourceAzureSqlTableFramework",
+						"type": "DatasetReference",
+						"parameters": {
+							"tableName": "DimCanastas",
 							"Schema": "DWH"
 						}
 					}
