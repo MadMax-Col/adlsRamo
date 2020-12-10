@@ -1639,6 +1639,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [DWH].[DimCanastas]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
