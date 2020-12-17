@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DimPersona",
+				"name": "DimMaterialPoliticas",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -20,12 +20,14 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "DWH/DimPersona/",
-							"wildcardFileName": "*.parquet"
+							"wildcardFolderPath": "DWH/DimMaterialPoliticas/",
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": true
 						}
 					},
 					"sink": {
 						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [DWH].[DimMaterialPoliticas]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
@@ -44,8 +46,8 @@
 						"referenceName": "SinkParquetRawGen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"SinkFilePath": "DWH/DimPersona/",
-							"SinkFileName": "DimPersona.snappy",
+							"SinkFilePath": "DWH/DimMaterialPoliticas/",
+							"SinkFileName": "DimMaterialPoliticas.snappy",
 							"SourceFileExtension": "parquet"
 						}
 					}
@@ -55,7 +57,7 @@
 						"referenceName": "SourceAzureSqlTableFramework",
 						"type": "DatasetReference",
 						"parameters": {
-							"tableName": "DimPersona",
+							"tableName": "DimMaterialPoliticas",
 							"Schema": "DWH"
 						}
 					}
