@@ -74,7 +74,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "DBFactFacturas",
+						"activity": "DBFactPedido",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -139,7 +139,14 @@
 			{
 				"name": "DBFactPedido",
 				"type": "DatabricksNotebook",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "DBFactFacturas",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -159,14 +166,7 @@
 			{
 				"name": "DBFactFacturas",
 				"type": "DatabricksNotebook",
-				"dependsOn": [
-					{
-						"activity": "DBFactPedido",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
