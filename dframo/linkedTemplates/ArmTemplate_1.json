@@ -3415,7 +3415,6 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [DWH].[DimMaterialPoliticas]",
 								"tableOption": "autoCreate",
 								"disableMetricsCollection": false
 							},
